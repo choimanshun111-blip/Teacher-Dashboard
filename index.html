@@ -63,9 +63,13 @@
         </nav>
         <div class="p-4 border-t border-gray-800 flex flex-col gap-3">
             <button id="btn-backup-db" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs py-2 rounded flex items-center justify-center gap-2 transition-colors">
-                <i class="ph ph-download-simple text-sm"></i> 下載全庫安全備份
+                <i class="ph ph-download-simple text-sm"></i> 1. 下載備份 (留底)
             </button>
-            <div class="flex items-center gap-2 text-xs text-gray-400">
+            <!-- 新增的重置按鈕 -->
+            <button id="btn-reset-db" class="w-full bg-red-900/40 hover:bg-red-800 text-red-300 text-xs py-2 rounded flex items-center justify-center gap-2 transition-colors border border-red-900/50">
+                <i class="ph ph-warning-circle text-sm"></i> 2. 新學年系統重置
+            </button>
+            <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
                 <div class="w-2 h-2 rounded-full bg-green-500" id="connection-status"></div>
                 <span id="user-status">系統連線中...</span>
             </div>
@@ -345,6 +349,28 @@
             </div>
         </div>
     </div>
+    
+    <!-- 4. Reset DB Confirmation Modal -->
+    <div id="modal-reset-db" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div class="p-5 border-b flex justify-between items-center bg-red-50 rounded-t-xl">
+                <h3 class="text-lg font-bold text-red-800 flex items-center gap-2"><i class="ph ph-warning text-xl"></i>警告：系統重置</h3>
+                <button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-sm">
+                <p class="text-gray-800 font-medium">您即將清空本學年的所有資料，包含名單、成績與日誌。</p>
+                <p class="text-red-600 font-bold">⚠️ 執行前，請務必確認您已經「下載備份」！</p>
+                <div>
+                    <label class="block font-medium mb-1 text-gray-500">請在下方輸入 <span class="font-bold text-red-600">RESET</span> 以確認操作：</label>
+                    <input type="text" id="reset-confirm-text" class="w-full p-2 border border-red-300 rounded-lg outline-none uppercase font-bold text-center tracking-widest text-red-600 focus:ring-2 focus:ring-red-200" placeholder="輸入 RESET">
+                </div>
+            </div>
+            <div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl">
+                <button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal text-gray-700 font-medium">取消返回</button>
+                <button id="btn-execute-reset" class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50" disabled>確認清空資料庫</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast Notifications -->
     <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-3 pointer-events-none"></div>
@@ -353,7 +379,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // ==========================================
         // 1. Firebase Init & State (TEACHER ONLY)
@@ -436,7 +462,6 @@
         }
 
         function updateDynamicClassFilters() {
-            // 動態提取所有班別
             const uniqueClasses = [...new Set(studentsData.map(s => s.classGroup).filter(c => c && c.trim() !== ''))].sort();
             const optionsHtml = `<option value="ALL">顯示全部班別</option>` + uniqueClasses.map(c => `<option value="${c}">${c}</option>`).join('');
             
@@ -456,7 +481,6 @@
             renderAlignerBoard(searchQ); 
         }
 
-        // Global Bindings
         document.getElementById('global-search').addEventListener('input', renderAllViews);
         document.getElementById('roster-class-filter').addEventListener('change', renderAllViews);
         document.getElementById('hw-class-filter').addEventListener('change', renderAllViews);
@@ -467,7 +491,6 @@
         // 4. Data Aligner: The Math & Dynamic Logic
         // ==========================================
         
-        // Mode Switch
         document.getElementById('mode-single').addEventListener('click', (e) => {
             alignerMode = 'single';
             e.target.classList.replace('text-gray-500', 'text-brand-orange'); e.target.classList.add('bg-white', 'shadow-sm', 'font-bold'); e.target.classList.remove('hover:bg-gray-200', 'font-medium');
@@ -485,13 +508,11 @@
             renderAlignerBoard();
         });
 
-        // Setup Dynamic Assessment Config UI
         function renderAlignerConfig() {
             const singleList = document.getElementById('single-assessment-list');
             const weightList = document.getElementById('weighted-assessment-list');
             const published = assessmentsData.filter(a => a.status === 'published');
             
-            // Single Mode UI
             const currentSingle = document.querySelector('input[name="aligner-single-sel"]:checked')?.value;
             singleList.innerHTML = '';
             if(published.length === 0) singleList.innerHTML = '<p class="text-xs text-gray-400">目前尚無已發佈的評核。</p>';
@@ -500,7 +521,6 @@
                 singleList.innerHTML += `<label class="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-gray-50"><input type="radio" name="aligner-single-sel" value="${asm.id}" class="text-brand-orange focus:ring-brand-orange" ${isChecked?'checked':''} onchange="window.triggerAlignerUpdate()"><span class="font-medium">${asm.title}</span><span class="text-xs text-gray-400 ml-auto">滿分: ${asm.maxScore}</span></label>`;
             });
 
-            // Weighted Mode UI
             weightList.innerHTML = '';
             if(published.length === 0) weightList.innerHTML = '<p class="text-xs text-gray-400">目前尚無已發佈的評核。</p>';
             published.forEach(asm => {
@@ -523,24 +543,22 @@
                 if(gDoc) {
                     if(gDoc.score === 'ABS') finalOutput = '[-]';
                     else {
-                        finalOutput = gDoc.score; // Raw score requested by user for WebSAMS
+                        finalOutput = gDoc.score; 
                         rawNumber = Number(gDoc.score);
                         const pct = (rawNumber / asm.maxScore) * 100;
                         if(pct>=80) gradeLetter='A'; else if(pct>=60) gradeLetter='B'; else if(pct>=50) gradeLetter='C'; else gradeLetter='F';
                         breakdown[asm.tag] = { e: rawNumber, m: asm.maxScore };
                     }
                 }
-            } else { // Weighted Mode
+            } else { 
                 const targetMax = Number(document.getElementById('aligner-target-max').value) || 100;
                 const checkedBoxes = Array.from(document.querySelectorAll('.aligner-wt-cb:checked'));
-                
                 let totalValidWeight = 0, weightedSum = 0;
                 
                 checkedBoxes.forEach(cb => {
                     const asmId = cb.getAttribute('data-id');
                     const wtInput = document.querySelector(`.aligner-wt-val[data-id="${asmId}"]`);
                     const wt = Number(wtInput.value) || 0;
-                    
                     const asm = assessmentsData.find(a => a.id === asmId);
                     const gDoc = gradesData.find(g => g.id === `${asmId}_${stuId}`);
                     
@@ -549,7 +567,6 @@
                         const pct = scoreNum / asm.maxScore;
                         weightedSum += (pct * wt);
                         totalValidWeight += wt;
-                        
                         if(!breakdown[asm.tag]) breakdown[asm.tag] = {e:0, m:0};
                         breakdown[asm.tag].e += scoreNum; breakdown[asm.tag].m += asm.maxScore;
                     }
@@ -560,7 +577,6 @@
                     rawNumber = finalPct * targetMax;
                     finalOutput = rawNumber.toFixed(1); 
                     if(finalOutput.endsWith('.0')) finalOutput = Math.round(rawNumber); 
-                    
                     if(finalPct>=0.8) gradeLetter='A'; else if(finalPct>=0.6) gradeLetter='B'; else if(finalPct>=0.5) gradeLetter='C'; else gradeLetter='F';
                 } else if(checkedBoxes.length > 0) {
                     finalOutput = '[-]';
@@ -574,7 +590,6 @@
             tbody.innerHTML = '';
             const classFilter = document.getElementById('aligner-class-filter').value;
             
-            // WebSAMS MUST include dropped students!
             let filteredStudents = studentsData;
             
             if(classFilter !== 'ALL') filteredStudents = filteredStudents.filter(s => s.classGroup === classFilter);
@@ -583,7 +598,6 @@
                 filteredStudents = filteredStudents.filter(s => (s.name && s.name.toLowerCase().includes(sq)) || (s.studentId && s.studentId.toLowerCase().includes(sq)) || (s.classGroup && s.classGroup.toLowerCase().includes(sq)));
             }
 
-            // WebSAMS Strict Sort: Class -> ClassNo
             filteredStudents.sort((a,b) => {
                 const cCmp = String(a.classGroup||'').localeCompare(String(b.classGroup||''));
                 if(cCmp !== 0) return cCmp;
@@ -625,7 +639,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Update Stats
             if(validScores.length > 0) {
                 const n = validScores.length, sum = validScores.reduce((a,b)=>a+b, 0), mean = sum / n;
                 const sd = Math.sqrt(validScores.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / n);
@@ -651,15 +664,14 @@
             }
         }
 
-        // WebSAMS Copy Engine
         document.getElementById('btn-copy-websams').addEventListener('click', async () => {
             const rows = document.querySelectorAll('#aligner-tbody tr');
             if(rows.length === 0) return showToast("沒有資料可複製", "error");
             
             let tsv = ""; 
             rows.forEach(tr => {
-                // Ensure we get clean text without HTML elements
                 const cellText = tr.querySelector('.websams-score-cell').textContent.trim();
+                // We keep it perfectly empty for dropped, outputting newline only
                 tsv += `${cellText}\n`;
             });
             
@@ -708,8 +720,10 @@
         });
 
         // ==========================================
-        // 6. Full DB Backup
+        // 6. DB Backup & Reset (NEW)
         // ==========================================
+        
+        // Backup
         document.getElementById('btn-backup-db').addEventListener('click', async () => {
             const btn = document.getElementById('btn-backup-db'); btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 打包數據中...'; btn.disabled = true;
             try {
@@ -723,7 +737,47 @@
                 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(logsData), "Audit_Logs");
                 XLSX.writeFile(wb, `RosterEngine_FullBackup_${new Date().toISOString().slice(0,10)}.xlsx`);
                 showToast("✅ 資料庫備份成功下載！", "success"); logAction("執行了 [全庫安全備份] 下載");
-            } catch(e) { showToast("備份失敗", "error"); } finally { btn.innerHTML = '<i class="ph ph-download-simple text-sm"></i> 下載全庫安全備份'; btn.disabled = false; }
+            } catch(e) { showToast("備份失敗", "error"); } finally { btn.innerHTML = '<i class="ph ph-download-simple text-sm"></i> 1. 下載備份 (留底)'; btn.disabled = false; }
+        });
+
+        // Reset Logic
+        const resetModal = document.getElementById('modal-reset-db');
+        const resetInput = document.getElementById('reset-confirm-text');
+        const btnExecuteReset = document.getElementById('btn-execute-reset');
+
+        document.getElementById('btn-reset-db').addEventListener('click', () => {
+            resetInput.value = '';
+            btnExecuteReset.disabled = true;
+            resetModal.classList.remove('hidden');
+        });
+
+        resetInput.addEventListener('input', (e) => {
+            btnExecuteReset.disabled = e.target.value.trim() !== 'RESET';
+        });
+
+        btnExecuteReset.addEventListener('click', async () => {
+            if(!currentUser) return;
+            btnExecuteReset.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 正在清空資料庫...';
+            btnExecuteReset.disabled = true;
+
+            try {
+                // Delete all collections one by one
+                const colsToDelete = ['students', 'homeworks', 'submissions', 'assessments', 'grades', 'logs'];
+                for (const colName of colsToDelete) {
+                    const snap = await getDocs(getColRef(colName));
+                    for (const docSnap of snap.docs) {
+                        await deleteDoc(getDocRef(colName, docSnap.id));
+                    }
+                }
+                showToast("✅ 新學年系統重置完成，資料庫已清空！", "success");
+                resetModal.classList.add('hidden');
+            } catch (err) {
+                console.error(err);
+                showToast("清空失敗，請重試", "error");
+            } finally {
+                btnExecuteReset.innerHTML = '確認清空資料庫';
+                btnExecuteReset.disabled = false;
+            }
         });
 
         // ==========================================
@@ -778,7 +832,6 @@
             tbody.innerHTML = '';
             
             let sorted = [...filtered].sort((a,b)=> {
-                // Drop status sorting, then Class, then ClassNo
                 if(a.status==='active' && b.status!=='active') return -1;
                 if(a.status!=='active' && b.status==='active') return 1;
                 const cCmp = String(a.classGroup).localeCompare(String(b.classGroup));
