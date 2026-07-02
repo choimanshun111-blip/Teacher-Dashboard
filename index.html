@@ -181,7 +181,6 @@
                             <p class="text-xs text-gray-500 mt-1">依照「班別+班號」嚴格排序。ABS顯示 `[-]`，退修生將自動留空。</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <!-- 🆕 新增：級別(Form)篩選 -->
                             <select id="aligner-form-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-form-dropdown"><option value="ALL">所有級別</option></select>
                             <select id="aligner-group-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-group-dropdown"><option value="ALL">所有組別(X1/X2)</option></select>
                             <select id="aligner-class-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-class-dropdown"><option value="ALL">顯示全部班別</option></select>
@@ -241,9 +240,11 @@
                 <section class="mb-8">
                     <div class="bg-white rounded-xl shadow-sm border p-6">
                         <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold flex items-center gap-2"><i class="ph ph-plus-circle text-brand-orange"></i>發布新功課</h3></div>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <!-- 🆕 升級：發佈功課時可以選擇「發佈對象」 -->
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                             <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">功課名稱</label><input type="text" id="new-hw-title" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 mb-1">截止日期與時間</label><input type="datetime-local" id="new-hw-due" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none"></div>
+                            <div class="col-span-1"><label class="block text-sm font-medium text-gray-700 mb-1">發佈對象</label><select id="new-hw-target" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none dynamic-target-dropdown"><option value="ALL">全級/全校</option></select></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1">截止時間</label><input type="datetime-local" id="new-hw-due" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none"></div>
                             <div><button id="btn-create-hw" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-medium p-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors"><i class="ph ph-paper-plane-right"></i> 發布</button></div>
                         </div>
                     </div>
@@ -254,7 +255,10 @@
                             <h3 class="text-lg font-semibold flex items-center gap-2"><i class="ph ph-funnel text-brand-orange"></i>功課進度總覽</h3>
                             <div class="flex gap-2">
                                 <select id="filter-hw-select" class="w-64 p-2 text-sm border rounded-lg outline-none bg-white"><option value="">-- 請選擇功課 --</option></select>
-                                <select id="hw-form-filter" class="w-24 p-2 text-sm border rounded-lg outline-none bg-white dynamic-form-dropdown"><option value="ALL">所有級別</option></select>
+                                <!-- 🆕 新增：刪除功課按鈕 -->
+                                <button id="btn-delete-hw" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-2 rounded-lg transition-colors hidden" title="刪除此功課"><i class="ph ph-trash text-lg"></i></button>
+                                
+                                <select id="hw-form-filter" class="w-24 p-2 text-sm border rounded-lg outline-none bg-white dynamic-form-dropdown ml-2"><option value="ALL">所有級別</option></select>
                                 <select id="hw-group-filter" class="w-28 p-2 text-sm border rounded-lg outline-none bg-white dynamic-group-dropdown"><option value="ALL">所有組別</option></select>
                                 <select id="hw-class-filter" class="w-28 p-2 text-sm border rounded-lg outline-none bg-white dynamic-class-dropdown"><option value="ALL">全部班別</option></select>
                             </div>
@@ -278,7 +282,7 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
                     <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
-                        <h3 class="font-bold flex items-center gap-2"><i class="ph ph-grid-nine text-brand-orange text-xl"></i>動態評核網格</h3>
+                        <h3 class="font-bold flex items-center gap-2"><i class="ph ph-grid-nine text-brand-orange text-xl"></i>動態評核網格 (游標移至標題可刪除)</h3>
                         <div class="flex gap-2">
                             <select id="grading-form-filter" class="p-1.5 text-xs border rounded-lg outline-none bg-white dynamic-form-dropdown"><option value="ALL">所有級別</option></select>
                             <select id="grading-group-filter" class="p-1.5 text-xs border rounded-lg outline-none bg-white dynamic-group-dropdown"><option value="ALL">所有組別</option></select>
@@ -300,11 +304,11 @@
                     <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border p-6 h-fit">
                         <h3 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b pb-3"><i class="ph ph-calendar-plus text-brand-orange text-xl"></i>安排新測考/提醒</h3>
                         <div class="space-y-4">
-                            <div><label class="block text-sm font-medium text-gray-700 mb-1">目標班別</label><select id="event-class" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange dynamic-class-dropdown text-sm"><option value="ALL">全部班別</option></select></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1">目標班別</label><select id="event-class" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange dynamic-target-dropdown text-sm"><option value="ALL">全部班別</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">日期</label><input type="date" id="event-date" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">類型</label><select id="event-type" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"><option value="Quiz">📝 小測 Quiz</option><option value="Test">📄 大考 Test</option><option value="Dictation">✍️ 默書 Dictation</option><option value="Reminder">🔔 一般提醒</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">標題</label><input type="text" id="event-title" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm" placeholder="例如：Chapter 3 小測"></div>
-                            <div><button id="btn-create-event" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 mt-2"><i class="ph ph-paper-plane-right"></i> 發佈至行事曆</button></div>
+                            <div><button id="btn-create-event" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 mt-2 transition-colors"><i class="ph ph-paper-plane-right"></i> 發佈至行事曆</button></div>
                         </div>
                     </div>
                     <div class="lg:col-span-2">
@@ -320,13 +324,12 @@
     </main>
 
     <!-- Modals -->
-    <div id="modal-assessment" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-gray-50 rounded-t-xl"><h3 class="text-lg font-bold flex items-center gap-2"><i class="ph ph-plus-circle text-brand-orange"></i>新增評核項目</h3><button class="text-gray-400 hover:text-gray-600 btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4"><div><label class="block text-sm font-medium mb-1">評核名稱 (例: Term 1 Test)</label><input type="text" id="asmt-title" class="w-full p-2 border rounded-lg outline-none"></div><div class="flex gap-4"><div class="flex-1"><label class="block text-sm font-medium mb-1">滿分</label><input type="number" id="asmt-max" class="w-full p-2 border rounded-lg outline-none" value="100"></div><div class="flex-1"><label class="block text-sm font-medium mb-1">標籤</label><select id="asmt-tag" class="w-full p-2 border rounded-lg outline-none"><option value="SDL">SDL Worksheet</option><option value="Quiz">Short Quiz</option><option value="Test">Term Test</option><option value="Exam">Exam</option></select></div></div><div><label class="block text-sm font-medium mb-1 text-yellow-600">連結功課(遲交扣分)</label><select id="asmt-linked-hw" class="w-full p-2 border border-yellow-300 rounded-lg bg-yellow-50 outline-none"><option value="">-- 不連結 --</option></select></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal">取消</button><button id="btn-save-asmt" class="px-4 py-2 bg-brand-orange text-white rounded-lg">建立草稿</button></div></div></div>
+    <div id="modal-assessment" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-gray-50 rounded-t-xl"><h3 class="text-lg font-bold flex items-center gap-2"><i class="ph ph-plus-circle text-brand-orange"></i>新增評核項目</h3><button class="text-gray-400 hover:text-gray-600 btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4"><div><label class="block text-sm font-medium mb-1">評核名稱 (例: Term 1 Test)</label><input type="text" id="asmt-title" class="w-full p-2 border rounded-lg outline-none"></div><div class="flex gap-4"><div class="flex-1"><label class="block text-sm font-medium mb-1">滿分</label><input type="number" id="asmt-max" class="w-full p-2 border rounded-lg outline-none" value="100"></div><div class="flex-1"><label class="block text-sm font-medium mb-1">標籤</label><select id="asmt-tag" class="w-full p-2 border rounded-lg outline-none"><option value="SDL">SDL Worksheet</option><option value="Quiz">Short Quiz</option><option value="Test">Term Test</option><option value="Exam">Exam</option></select></div><!-- 🆕 新增對象選單 --><div class="flex-1"><label class="block text-sm font-medium mb-1">發佈對象</label><select id="asmt-target" class="w-full p-2 border rounded-lg outline-none dynamic-target-dropdown"><option value="ALL">全校/全級</option></select></div></div><div><label class="block text-sm font-medium mb-1 text-yellow-600">連結功課(遲交扣分)</label><select id="asmt-linked-hw" class="w-full p-2 border border-yellow-300 rounded-lg bg-yellow-50 outline-none"><option value="">-- 不連結 --</option></select></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal text-gray-700">取消</button><button id="btn-save-asmt" class="px-4 py-2 bg-brand-orange text-white rounded-lg">建立草稿</button></div></div></div>
 
     <div id="modal-blueprint" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-blue-50 rounded-t-xl"><h3 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="ph ph-file-xls"></i>大考成績匯入</h3><button class="btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><p class="text-gray-600 bg-gray-100 p-3 rounded-lg"><i class="ph ph-info"></i> 根據藍圖加總，系統將自動比對 Email 或班號</p><div><label class="block font-medium mb-1">大考名稱</label><input type="text" id="bp-title" class="w-full p-2 border rounded-lg"></div><div><label class="block font-medium mb-1">藍圖結構 (題號:滿分)</label><input type="text" id="bp-config" class="w-full p-2 border rounded-lg font-mono" placeholder="Q1:5, Q2:10"></div><div class="border-2 border-dashed border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 cursor-pointer relative"><input type="file" id="bp-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls"><i class="ph ph-upload-simple text-3xl text-blue-400 mb-2"></i><p class="font-medium text-blue-600">上載 Excel 批改記錄表</p></div></div></div></div>
 
     <div id="modal-report-card" class="fixed inset-0 bg-black/60 z-[60] hidden flex flex-col items-center justify-center backdrop-blur-sm py-4"><div class="w-full max-w-[210mm] bg-white rounded-t-xl p-4 flex justify-between items-center shadow-lg z-[61]"><h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="ph ph-student text-brand-orange"></i>學術畫像報告</h3><div class="flex gap-3"><button id="btn-export-pdf" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"><i class="ph ph-file-pdf"></i> 下載 PDF</button><button class="btn-close-modal bg-gray-200 px-4 py-2 rounded-lg text-gray-700">關閉</button></div></div><div class="w-full max-w-[210mm] bg-white overflow-y-auto flex-1 rounded-b-xl shadow-2xl relative scrollbar-hide"><div id="pdf-content" class="p-12 bg-white text-gray-900 w-full min-h-[297mm] mx-auto box-border" style="aspect-ratio: 210/297;"><div class="border-b-4 border-brand-orange pb-6 mb-8 flex justify-between items-end"><div><h1 class="text-4xl font-black tracking-wider text-brand-black">STUDENT REPORT</h1><p class="text-gray-500 mt-2 text-lg">Academic Performance Analytics</p></div><div class="text-right"><p class="text-3xl font-bold text-brand-orange" id="rep-name">Name</p><p class="text-xl font-mono text-gray-600 mt-1">Class: <span id="rep-class">4A</span> | No: <span id="rep-id">01</span></p></div></div><div class="grid grid-cols-2 gap-10 mb-10"><div class="space-y-6"><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Overall Analyzed Score</h4><p class="text-5xl font-black font-mono text-gray-900" id="rep-total">--%</p></div><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Performance Indicator</h4><p class="text-lg">This student performs at a <strong class="text-brand-orange" id="rep-grade-letter">--</strong> level.</p></div></div><div class="flex items-center justify-center p-4"><canvas id="radarChart" width="300" height="300"></canvas></div></div><div class="mb-8"><h4 class="text-xl font-bold border-l-4 border-brand-orange pl-3 mb-4">Assessment Breakdown</h4><table class="w-full text-left text-sm border-collapse"><thead class="bg-gray-100 text-gray-700"><tr><th class="p-3 border">Assessment Category</th><th class="p-3 border text-center">Score Ratio (%)</th></tr></thead><tbody id="rep-tbody" class="divide-y"></tbody></table></div><div class="text-center text-gray-400 text-sm mt-auto pt-10 border-t"><p>Generated by Roster Engine | <span id="rep-date"></span></p></div></div></div></div>
     
-    <!-- 🆕 新增：精準清除選擇視窗 (Granular Reset) -->
     <div id="modal-reset-db" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-red-50 rounded-t-xl"><h3 class="text-lg font-bold text-red-800 flex items-center gap-2"><i class="ph ph-trash text-xl"></i>升學與畢業資料清理</h3><button class="btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><p class="text-gray-800 font-medium">您可以選擇性地刪除特定級別（如畢業班）的資料，而保留其他學生的歷史成績，或是全庫清空。</p><p class="text-red-600 font-bold">⚠️ 執行前，建議先「下載備份」！</p><div><label class="block font-medium mb-1 text-gray-500">選擇清理範圍：</label><select id="reset-scope" class="w-full p-2 border border-gray-300 rounded-lg outline-none mb-3"><option value="ALL">🚨 清空全校所有資料 (完全重置)</option></select></div><div><label class="block font-medium mb-1 text-gray-500">請輸入 <span class="font-bold text-red-600">DELETE</span> 確認：</label><input type="text" id="reset-confirm-text" class="w-full p-2 border border-red-300 rounded-lg outline-none uppercase font-bold text-center text-red-600 focus:ring-2 focus:ring-red-200"></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal">取消</button><button id="btn-execute-reset" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50" disabled>確認刪除</button></div></div></div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-3 pointer-events-none z-[200]"></div>
@@ -365,6 +368,15 @@
 
         // Extract Form (e.g., '4A' -> '4')
         function getForm(cls) { if(!cls) return ''; const m = cls.match(/\d+/); return m ? m[0] : ''; }
+
+        // 🆕 Check if target matches student
+        function isTargetMatch(target, stu) {
+            if(!target || target === 'ALL') return true;
+            if(target === stu.classGroup) return true; // e.g., 4A
+            if(target === getForm(stu.classGroup)) return true; // e.g., 4 (S4)
+            if(target === stu.subjectGroup) return true; // e.g., X1
+            return false;
+        }
 
         onAuthStateChanged(auth, (user) => { 
             const overlay = document.getElementById('login-overlay');
@@ -427,19 +439,23 @@
             document.querySelectorAll('.dynamic-class-dropdown').forEach(d => { const v = d.value; d.innerHTML = classHtml; if(v !== 'ALL' && uniqueClasses.includes(v)) d.value = v; });
             window.dynamicClassOptions = uniqueClasses; 
 
-            // Form extraction
             const uniqueForms = [...new Set(studentsData.map(s => getForm(s.classGroup)).filter(f => f !== ''))].sort();
             const formHtml = `<option value="ALL">所有級別</option>` + uniqueForms.map(f => `<option value="${f}">S${f}</option>`).join('');
             document.querySelectorAll('.dynamic-form-dropdown').forEach(d => { const v = d.value; d.innerHTML = formHtml; if(v !== 'ALL' && uniqueForms.includes(v)) d.value = v; });
 
-            // Reset Options Update
             const resetSel = document.getElementById('reset-scope');
             resetSel.innerHTML = `<option value="ALL">🚨 清空全校所有資料 (完全重置)</option>` + uniqueForms.map(f => `<option value="${f}">🗑️ 僅刪除【S${f}】的學生與成績</option>`).join('');
 
-            // X1/X2 Group extraction
             const uniqueGroups = [...new Set(studentsData.map(s => s.subjectGroup).filter(g => g && g.trim() !== ''))].sort();
             const groupHtml = `<option value="ALL">所有組別</option>` + uniqueGroups.map(g => `<option value="${g}">${g}</option>`).join('');
             document.querySelectorAll('.dynamic-group-dropdown').forEach(d => { const v = d.value; d.innerHTML = groupHtml; if(v !== 'ALL' && uniqueGroups.includes(v)) d.value = v; });
+
+            // 🆕 智能發佈對象選單 (結合 年級、組別、班級)
+            const targetHtml = `<option value="ALL">全校/全級</option>` + 
+                uniqueForms.map(f => `<option value="${f}">只限 S${f} 全級</option>`).join('') +
+                uniqueGroups.map(g => `<option value="${g}">只限 ${g} 組別</option>`).join('') +
+                uniqueClasses.map(c => `<option value="${c}">只限 ${c} 班</option>`).join('');
+            document.querySelectorAll('.dynamic-target-dropdown').forEach(d => { const v = d.value; d.innerHTML = targetHtml; if(v !== 'ALL') d.value = v; });
         }
 
         function renderAllViews() {
@@ -462,7 +478,7 @@
             if(sorted.length === 0) return list.innerHTML = '<div class="text-center py-8 text-gray-400">目前沒有即將到來的測考或排程。</div>';
             sorted.forEach(evt => {
                 let ic='ph-bell', clr='text-blue-600 bg-blue-100'; if(evt.type==='Quiz'){ic='ph-file-text';clr='text-orange-600 bg-orange-100';}else if(evt.type==='Test'){ic='ph-exam';clr='text-red-600 bg-red-100';}else if(evt.type==='Dictation'){ic='ph-pencil-simple';clr='text-purple-600 bg-purple-100';}
-                list.innerHTML += `<div class="flex items-center justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-center gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr}"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${evt.classGroup==='ALL'?'全級':evt.classGroup}</span></div><h4 class="font-bold text-gray-900 text-lg">${evt.title}</h4></div></div><button class="btn-del-event p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg" data-id="${evt.id}"><i class="ph ph-trash text-xl"></i></button></div>`;
+                list.innerHTML += `<div class="flex items-center justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-center gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr}"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${evt.classGroup==='ALL'?'全級/全校':evt.classGroup}</span></div><h4 class="font-bold text-gray-900 text-lg">${evt.title}</h4></div></div><button class="btn-del-event p-2 text-red-400 hover:text-white hover:bg-red-500 rounded-lg transition-colors" data-id="${evt.id}" title="刪除此排程"><i class="ph ph-trash text-xl"></i></button></div>`;
             });
             document.querySelectorAll('.btn-del-event').forEach(btn => btn.addEventListener('click', async (e) => { if(confirm("確定刪除此排程？")) { await deleteDoc(getDocRef('timetable', e.currentTarget.getAttribute('data-id'))); showToast("已刪除", "success"); } }));
         }
@@ -482,17 +498,22 @@
         }
         window.triggerAlignerUpdate = () => renderAlignerBoard(); document.getElementById('aligner-target-max').addEventListener('input', () => renderAlignerBoard());
 
-        function calculateStudentScore(stuId) {
+        function calculateStudentScore(stu) {
             let out = '--', raw = null, gl = 'N.A.', bk = {};
             if(alignerMode === 'single') {
                 const selId = document.querySelector('input[name="aligner-single-sel"]:checked')?.value; if(!selId) return { output: '--', val: null, grade: '-', bk: {} };
-                const asm = assessmentsData.find(a => a.id === selId), gDoc = gradesData.find(g => g.id === `${selId}_${stuId}`);
+                const asm = assessmentsData.find(a => a.id === selId);
+                // 🆕 Check if targeted
+                if(!isTargetMatch(asm.target, stu)) return { output: 'N.A.', val: null, grade: '-', bk: {} };
+                const gDoc = gradesData.find(g => g.id === `${selId}_${stu.studentId}`);
                 if(gDoc) { if(gDoc.score === 'ABS') out = '[-]'; else { out = gDoc.score; raw = Number(gDoc.score); const p = (raw/asm.maxScore)*100; gl = p>=80?'A':p>=60?'B':p>=50?'C':'F'; bk[asm.tag] = {e:raw, m:asm.maxScore}; } }
             } else {
                 const tMax = Number(document.getElementById('aligner-target-max').value)||100, cbx = Array.from(document.querySelectorAll('.aligner-wt-cb:checked'));
                 let tWt = 0, wSum = 0;
                 cbx.forEach(cb => {
-                    const aId = cb.getAttribute('data-id'), wt = Number(document.querySelector(`.aligner-wt-val[data-id="${aId}"]`).value)||0, asm = assessmentsData.find(a => a.id === aId), gDoc = gradesData.find(g => g.id === `${aId}_${stuId}`);
+                    const aId = cb.getAttribute('data-id'), wt = Number(document.querySelector(`.aligner-wt-val[data-id="${aId}"]`).value)||0, asm = assessmentsData.find(a => a.id === aId);
+                    if(!isTargetMatch(asm.target, stu)) return; // 🆕 Skip non-targeted
+                    const gDoc = gradesData.find(g => g.id === `${aId}_${stu.studentId}`);
                     if(gDoc && gDoc.score !== 'ABS' && gDoc.score !== '-' && gDoc.score !== '') { const sc = Number(gDoc.score); wSum += (sc/asm.maxScore)*wt; tWt += wt; if(!bk[asm.tag]) bk[asm.tag]={e:0,m:0}; bk[asm.tag].e+=sc; bk[asm.tag].m+=asm.maxScore; }
                 });
                 if(tWt > 0) { const pct = wSum/tWt; raw = pct*tMax; out = raw.toFixed(1); if(out.endsWith('.0')) out = Math.round(raw); gl = pct>=0.8?'A':pct>=0.6?'B':pct>=0.5?'C':'F'; } else if(cbx.length > 0) out = '[-]';
@@ -522,10 +543,10 @@
             let fList = filterAndSortStudents('aligner'), vScores = [];
             fList.forEach(stu => {
                 let out = '', gl = 'N.A.', res = null;
-                if(stu.status !== 'dropped') { res = calculateStudentScore(stu.studentId); out = res.output; gl = res.grade; if(res.val !== null) vScores.push(res.val); }
+                if(stu.status !== 'dropped') { res = calculateStudentScore(stu); out = res.output; gl = res.grade; if(res.val !== null) vScores.push(res.val); }
                 const tr = document.createElement('tr'); tr.className = "hover:bg-orange-50/50 cursor-pointer border-b border-gray-100";
-                if(stu.status !== 'dropped') tr.onclick = () => openReportCard(stu, res);
-                tr.innerHTML = `<td class="px-6 py-2.5 font-mono text-gray-500">S${getForm(stu.classGroup)}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.subjectGroup||'-'}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.classGroup||'-'}</td><td class="px-6 py-2.5 font-mono font-bold">${stu.classNo||stu.studentId}</td><td class="px-6 py-2.5">${stu.status==='dropped'?`<span class="text-gray-400 line-through">${stu.name}</span><span class="text-[10px] bg-red-100 text-red-600 px-1 ml-1 rounded">退修</span>`:`<span class="font-medium text-brand-orange hover:underline">${stu.name}</span>`}</td><td class="px-6 py-2.5 font-bold font-mono text-center border-l-2 border-r-2 border-brand-orange/30 bg-orange-50/30 websams-score-cell">${out}</td><td class="px-6 py-2.5 text-right"><span class="px-2 py-1 bg-gray-100 rounded text-xs font-bold text-gray-600">${gl}</span></td>`;
+                if(stu.status !== 'dropped' && out !== 'N.A.') tr.onclick = () => openReportCard(stu, res);
+                tr.innerHTML = `<td class="px-6 py-2.5 font-mono text-gray-500">S${getForm(stu.classGroup)}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.subjectGroup||'-'}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.classGroup||'-'}</td><td class="px-6 py-2.5 font-mono font-bold">${stu.classNo||stu.studentId}</td><td class="px-6 py-2.5">${stu.status==='dropped'?`<span class="text-gray-400 line-through">${stu.name}</span><span class="text-[10px] bg-red-100 text-red-600 px-1 ml-1 rounded">退修</span>`:`<span class="font-medium text-brand-orange hover:underline">${stu.name}</span>`}</td><td class="px-6 py-2.5 font-bold font-mono text-center border-l-2 border-r-2 border-brand-orange/30 ${out==='N.A.'?'bg-gray-100 text-gray-400':'bg-orange-50/30'} websams-score-cell">${out}</td><td class="px-6 py-2.5 text-right"><span class="px-2 py-1 bg-gray-100 rounded text-xs font-bold text-gray-600">${gl}</span></td>`;
                 tbody.appendChild(tr);
             });
             if(vScores.length > 0) {
@@ -537,12 +558,12 @@
 
         document.getElementById('btn-copy-websams').addEventListener('click', async () => {
             const rows = document.querySelectorAll('#aligner-tbody tr'); if(rows.length === 0) return;
-            let tsv = ""; rows.forEach(tr => tsv += `${tr.querySelector('.websams-score-cell').textContent.trim()}\n`);
+            let tsv = ""; rows.forEach(tr => tsv += `${tr.querySelector('.websams-score-cell').textContent.trim().replace('N.A.','')}\n`);
             try { await navigator.clipboard.writeText(tsv); showToast("✅ 已複製分數欄！請到 WebSAMS 貼上", "success"); } catch(e) { showToast("複製失敗", "error"); }
         });
 
         function openReportCard(stu, res) {
-            if(!res) return;
+            if(!res || res.output === 'N.A.') return;
             document.getElementById('rep-name').textContent = stu.name; document.getElementById('rep-class').textContent = stu.classGroup||''; document.getElementById('rep-id').textContent = stu.classNo||stu.studentId;
             document.getElementById('rep-total').textContent = res.output==='--'?'--':res.output; document.getElementById('rep-grade-letter').textContent = res.grade==='A'?'Excellent (A)':res.grade==='B'?'Good (B)':res.grade==='C'?'Pass (C)':'Need Improv. (F)'; document.getElementById('rep-date').textContent = new Date().toLocaleDateString();
             const tbody = document.getElementById('rep-tbody'); tbody.innerHTML = ''; const dPts = [];
@@ -584,18 +605,15 @@
                     }
                     showToast("✅ 系統已完全重置", "success");
                 } else {
-                    // Selective Form Deletion
                     const targetStudents = studentsData.filter(s => getForm(s.classGroup) === scope);
                     for(const stu of targetStudents) {
                         await deleteDoc(getDocRef('students', stu.id));
-                        // Delete related grades
                         const gSnap = await getDocs(getColRef('grades'));
                         for (const docSnap of gSnap.docs) { if(docSnap.data().studentId === stu.studentId) await deleteDoc(getDocRef('grades', docSnap.id)); }
-                        // Delete related submissions
                         const sSnap = await getDocs(getColRef('submissions'));
                         for (const docSnap of sSnap.docs) { if(docSnap.data().studentId === stu.studentId) await deleteDoc(getDocRef('submissions', docSnap.id)); }
                     }
-                    showToast(`✅ 中 ${scope} 的學生及成績已成功清理`, "success");
+                    showToast(`✅ S${scope} 的學生及成績已清理`, "success");
                 }
                 resetModal.classList.add('hidden');
             } catch (err) { showToast("刪除失敗", "error"); } finally { btnExecuteReset.innerHTML = '確認刪除'; btnExecuteReset.disabled = false; }
@@ -625,13 +643,11 @@
                             else if(/email|郵件/i.test(kl)) email = String(row[k]).trim();
                             else if(/studentid|學號|id/i.test(kl)) stuId = String(row[k]).trim();
                         }
-                        // 🔑 真學號機制：優先提取 Email 前綴！
                         let emailPrefix = email ? email.split('@')[0].trim() : '';
                         let finalStuId = emailPrefix || stuId || `${cls}-${cNo}`;
-
                         if (finalStuId) { await setDoc(getDocRef('students', finalStuId), { studentId: finalStuId, classNo: cNo, name, email, classGroup: cls, subjectGroup: grp, isMonitor: false, targetClass: "", status: "active", updatedAt: new Date().toISOString() }, { merge: true }); count++; }
                     }
-                    txt.textContent = `成功處理 ${count} 筆學生資料。`; logAction(`匯入名單`); setTimeout(() => { status.classList.add('hidden'); fileInput.value = ""; }, 3000);
+                    txt.textContent = `成功處理 ${count} 筆。`; logAction(`匯入名單`); setTimeout(() => { status.classList.add('hidden'); fileInput.value = ""; }, 3000);
                 } catch (error) { txt.textContent = `處理失敗：請檢查 Excel 格式`; }
             }; reader.readAsArrayBuffer(file);
         }
@@ -639,7 +655,7 @@
         function renderRosterTable() {
             const tbody = document.getElementById('roster-tbody'); let fList = filterAndSortStudents('roster');
             document.getElementById('student-count').textContent = `${fList.length} 人`; tbody.innerHTML = '';
-            const opts = window.dynamicClassOptions || []; const selHtml = `<option value="">無</option>` + opts.map(o => `<option value="${o}">${o}</option>`).join('');
+            const opts = window.dynamicClassOptions || [];
             fList.forEach(s => {
                 const isD = s.status === 'dropped'; const tr = document.createElement('tr'); tr.className = isD ? "bg-red-50 opacity-60" : "border-b hover:bg-gray-50";
                 tr.innerHTML = `<td class="px-6 py-3 font-mono">S${getForm(s.classGroup)}</td><td class="px-6 py-3 font-mono">${s.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono font-bold">${s.classGroup||'-'} / ${s.classNo||'-'}</td><td class="px-6 py-3 font-mono text-gray-400 text-xs">${s.studentId}</td><td class="px-6 py-3 font-medium">${s.name||'-'} ${isD?'<span class="text-[10px] bg-red-200 text-red-800 px-1 rounded ml-1">Dropped</span>':''}</td><td class="px-6 py-3 text-center"><input type="checkbox" class="monitor-cb text-brand-orange" data-id="${s.id}" ${s.isMonitor?'checked':''} ${isD?'disabled':''}></td><td class="px-6 py-3"><select class="tgt-sel text-sm border p-1 rounded outline-none" data-id="${s.id}" ${isD?'disabled':''}>${`<option value="" ${s.targetClass===''?'selected':''}>無</option>` + opts.map(o=>`<option value="${o}" ${s.targetClass===o?'selected':''}>${o}</option>`).join('')}</select></td><td class="px-6 py-3 text-right">${!isD ? `<button class="text-red-500 font-bold drop-btn" data-id="${s.id}">Drop</button>` : `<span class="text-xs text-gray-400">已退修</span>`}</td>`;
@@ -650,33 +666,74 @@
             document.querySelectorAll('.drop-btn').forEach(btn=>btn.addEventListener('click', async(e)=>{ if(confirm("確定標記退修？")) await setDoc(getDocRef('students', e.target.dataset.id), {status: 'dropped'}, {merge:true}); }));
         }
 
-        document.getElementById('btn-create-hw').addEventListener('click', async () => { const t = document.getElementById('new-hw-title').value, d = document.getElementById('new-hw-due').value; if(!t||!d) return showToast("缺資料", "error"); await setDoc(getDocRef('homeworks', `hw_${Date.now()}`), { title: t, dueDate: d, createdAt: new Date().toISOString() }); showToast("發布成功", "success"); document.getElementById('new-hw-title').value = ''; });
+        // 🆕 Homework Creation with Target
+        document.getElementById('btn-create-hw').addEventListener('click', async () => { 
+            const t = document.getElementById('new-hw-title').value, d = document.getElementById('new-hw-due').value, tgt = document.getElementById('new-hw-target').value; 
+            if(!t||!d) return showToast("缺資料", "error"); 
+            await setDoc(getDocRef('homeworks', `hw_${Date.now()}`), { title: t, dueDate: d, target: tgt, createdAt: new Date().toISOString() }); 
+            showToast("發布成功", "success"); document.getElementById('new-hw-title').value = ''; 
+        });
         
+        // 🆕 Homework Deletion Event
+        document.getElementById('filter-hw-select').addEventListener('change', (e) => {
+            const btnDel = document.getElementById('btn-delete-hw');
+            if(e.target.value) btnDel.classList.remove('hidden'); else btnDel.classList.add('hidden');
+            renderTeacherHwTable();
+        });
+        document.getElementById('btn-delete-hw').addEventListener('click', async () => {
+            const hwId = document.getElementById('filter-hw-select').value;
+            if(!hwId) return;
+            if(confirm("確定要刪除這份功課？(學生端將同步移除)")) {
+                await deleteDoc(getDocRef('homeworks', hwId));
+                showToast("功課已刪除", "success");
+                document.getElementById('filter-hw-select').value = '';
+                document.getElementById('btn-delete-hw').classList.add('hidden');
+            }
+        });
+
         function renderTeacherHwTable() {
             const tbody = document.getElementById('teacher-hw-tbody'), hwId = document.getElementById('filter-hw-select').value;
             if(!hwId) return tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">請選功課。</td></tr>`;
+            const hwData = homeworksData.find(h => h.id === hwId);
             let fList = filterAndSortStudents('hw'); tbody.innerHTML = '';
+            
             fList.forEach(stu => {
+                if(!isTargetMatch(hwData?.target, stu)) return; // 🆕 Skip non-targeted students
                 const sub = submissionsData.find(s => s.id === `${hwId}_${stu.studentId}`) || {status:'missing', lateDays:0};
                 const badge = sub.status==='missing' ? `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">未交</span>` : (sub.status==='submitted' ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">已交</span>` : `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">已補交</span>`);
                 tbody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="px-6 py-3 font-mono">S${getForm(stu.classGroup)} / ${stu.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono">${stu.classGroup}/${stu.classNo||'-'}</td><td class="px-6 py-3 font-medium">${stu.name}</td><td class="px-6 py-3">${badge}</td><td class="px-6 py-3 text-right"><select class="hw-override p-1.5 border rounded outline-none text-sm" data-hw="${hwId}" data-stu="${stu.studentId}"><option value="missing" ${sub.status==='missing'?'selected':''}>未交</option><option value="submitted" ${sub.status==='submitted'?'selected':''}>已交</option><option value="late_submitted" ${sub.status==='late_submitted'?'selected':''}>補交</option></select></td></tr>`;
             });
+            if(tbody.innerHTML==='') tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">沒有符合發佈對象的學生。</td></tr>`;
+            
             document.querySelectorAll('.hw-override').forEach(sel=>sel.addEventListener('change', async(e)=>{ await setDoc(getDocRef('submissions', `${e.target.dataset.hw}_${e.target.dataset.stu}`), {studentId:e.target.dataset.stu, homeworkId:e.target.dataset.hw, status:e.target.value, lateDays:(e.target.value==='late_submitted'?1:0), updatedAt:new Date().toISOString()}, {merge:true}); }));
         }
 
         document.getElementById('btn-add-assessment').addEventListener('click', () => document.getElementById('modal-assessment').classList.remove('hidden'));
-        document.getElementById('btn-save-asmt').addEventListener('click', async () => { const t = document.getElementById('asmt-title').value, m = Number(document.getElementById('asmt-max').value); if(!t||!m) return; await setDoc(getDocRef('assessments', `asm_${Date.now()}`), { title: t, maxScore: m, tag: document.getElementById('asmt-tag').value, linkedHwId: document.getElementById('asmt-linked-hw').value, status: 'draft', createdAt: new Date().toISOString() }); document.getElementById('modal-assessment').classList.add('hidden'); showToast("建立草稿", "success"); });
+        document.getElementById('btn-save-asmt').addEventListener('click', async () => { 
+            const t = document.getElementById('asmt-title').value, m = Number(document.getElementById('asmt-max').value), tgt = document.getElementById('asmt-target').value; 
+            if(!t||!m) return; 
+            await setDoc(getDocRef('assessments', `asm_${Date.now()}`), { title: t, maxScore: m, tag: document.getElementById('asmt-tag').value, target: tgt, linkedHwId: document.getElementById('asmt-linked-hw').value, status: 'draft', createdAt: new Date().toISOString() }); 
+            document.getElementById('modal-assessment').classList.add('hidden'); showToast("建立草稿", "success"); 
+        });
         document.getElementById('btn-publish-all').addEventListener('click', () => { assessmentsData.filter(a=>a.status==='draft').forEach(async asm => await setDoc(getDocRef('assessments', asm.id), {status:'published'}, {merge:true})); showToast("發佈完成", "success"); });
         
+        // 🆕 Assessment Deletion Event
+        window.deleteAsm = async (id) => {
+            if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); }
+        }
+
         function renderGradingBoard() {
             const thead = document.getElementById('grading-thead'), tbody = document.getElementById('grading-tbody');
             let hHtml = `<tr><th class="w-20 bg-gray-100 z-30 shadow-sm border-r">級/組</th><th class="w-24 bg-gray-100 z-30 shadow-sm border-r">班別班號</th><th class="w-32 bg-gray-100 z-30 shadow-sm border-r">姓名</th>`;
-            assessmentsData.forEach(a => hHtml += `<th>${a.title} ${a.status==='draft'?'<span class="text-yellow-600 bg-yellow-100 px-1 rounded ml-1">Draft</span>':''}<br><span class="text-xs font-normal text-gray-500">/${a.maxScore}</span></th>`);
+            assessmentsData.forEach(a => {
+                hHtml += `<th class="group relative">${a.title} ${a.status==='draft'?'<span class="text-yellow-600 bg-yellow-100 px-1 rounded ml-1">Draft</span>':''}<br><span class="text-xs font-normal text-gray-500">/${a.maxScore}</span><button class="absolute top-1 right-1 text-red-400 hover:text-red-600 hidden group-hover:block transition-colors" onclick="window.deleteAsm('${a.id}')" title="刪除"><i class="ph ph-trash"></i></button></th>`;
+            });
             thead.innerHTML = hHtml + `<th class="bg-gray-100 z-20 shadow-sm">得分率</th></tr>`; tbody.innerHTML = '';
             let fList = filterAndSortStudents('grading');
             fList.forEach(stu => {
                 let rHtml = `<td class="font-mono bg-white z-10 border-r shadow-sm">S${getForm(stu.classGroup)}/${stu.subjectGroup||'-'}</td><td class="font-mono font-bold bg-white z-10 border-r shadow-sm">${stu.classGroup}/${stu.classNo||'-'}</td><td class="font-medium bg-white z-10 border-r shadow-sm">${stu.name}</td>`, tE=0, tM=0;
                 assessmentsData.forEach(asm => {
+                    if(!isTargetMatch(asm.target, stu)) { rHtml += `<td class="bg-gray-50 text-gray-300 font-mono text-xs cursor-not-allowed">N.A.</td>`; return; } // 🆕 Handle non-targeted
                     const gd = gradesData.find(g => g.id === `${asm.id}_${stu.studentId}`); let sc = '-', cls = 'text-gray-400';
                     if(gd) { sc = gd.score; if(sc==='ABS') cls='text-blue-500 font-bold'; else { cls = gd.penalty>0?'text-yellow-600 font-bold':'text-gray-900 font-bold'; tE+=Number(sc); tM+=Number(asm.maxScore); } }
                     rHtml += `<td class="cell-editable ${cls}" data-asm="${asm.id}" data-stu="${stu.studentId}" data-hw="${asm.linkedHwId||''}">${sc}</td>`;
@@ -710,7 +767,7 @@
             const reader = new FileReader();
             reader.onload = async (ev) => {
                 const json = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(ev.target.result), {type:'array'}).Sheets[XLSX.read(new Uint8Array(ev.target.result), {type:'array'}).SheetNames[0]]);
-                const aId = `asm_${Date.now()}`; await setDoc(getDocRef('assessments', aId), {title:t, maxScore:tM, tag:'Exam', status:'draft', blueprint:bp, createdAt:new Date().toISOString()});
+                const aId = `asm_${Date.now()}`; await setDoc(getDocRef('assessments', aId), {title:t, maxScore:tM, tag:'Exam', target:'ALL', status:'draft', blueprint:bp, createdAt:new Date().toISOString()});
                 json.forEach(async row => {
                     let sId = String(row['Student ID']||row['學號']||row['班號']||''); if(!sId) return; 
                     let sTot=0, bk={}; for(let q in bp){ if(row[q]!==undefined){bk[q]=Number(row[q]); sTot+=Number(row[q]);}}
