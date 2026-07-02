@@ -429,12 +429,12 @@
 
             // Form extraction
             const uniqueForms = [...new Set(studentsData.map(s => getForm(s.classGroup)).filter(f => f !== ''))].sort();
-            const formHtml = `<option value="ALL">所有級別</option>` + uniqueForms.map(f => `<option value="${f}">中 ${f}</option>`).join('');
+            const formHtml = `<option value="ALL">所有級別</option>` + uniqueForms.map(f => `<option value="${f}">S${f}</option>`).join('');
             document.querySelectorAll('.dynamic-form-dropdown').forEach(d => { const v = d.value; d.innerHTML = formHtml; if(v !== 'ALL' && uniqueForms.includes(v)) d.value = v; });
 
             // Reset Options Update
             const resetSel = document.getElementById('reset-scope');
-            resetSel.innerHTML = `<option value="ALL">🚨 清空全校所有資料 (完全重置)</option>` + uniqueForms.map(f => `<option value="${f}">🗑️ 僅刪除【中 ${f}】的學生與成績</option>`).join('');
+            resetSel.innerHTML = `<option value="ALL">🚨 清空全校所有資料 (完全重置)</option>` + uniqueForms.map(f => `<option value="${f}">🗑️ 僅刪除【S${f}】的學生與成績</option>`).join('');
 
             // X1/X2 Group extraction
             const uniqueGroups = [...new Set(studentsData.map(s => s.subjectGroup).filter(g => g && g.trim() !== ''))].sort();
@@ -525,7 +525,7 @@
                 if(stu.status !== 'dropped') { res = calculateStudentScore(stu.studentId); out = res.output; gl = res.grade; if(res.val !== null) vScores.push(res.val); }
                 const tr = document.createElement('tr'); tr.className = "hover:bg-orange-50/50 cursor-pointer border-b border-gray-100";
                 if(stu.status !== 'dropped') tr.onclick = () => openReportCard(stu, res);
-                tr.innerHTML = `<td class="px-6 py-2.5 font-mono text-gray-500">中${getForm(stu.classGroup)}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.subjectGroup||'-'}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.classGroup||'-'}</td><td class="px-6 py-2.5 font-mono font-bold">${stu.classNo||stu.studentId}</td><td class="px-6 py-2.5">${stu.status==='dropped'?`<span class="text-gray-400 line-through">${stu.name}</span><span class="text-[10px] bg-red-100 text-red-600 px-1 ml-1 rounded">退修</span>`:`<span class="font-medium text-brand-orange hover:underline">${stu.name}</span>`}</td><td class="px-6 py-2.5 font-bold font-mono text-center border-l-2 border-r-2 border-brand-orange/30 bg-orange-50/30 websams-score-cell">${out}</td><td class="px-6 py-2.5 text-right"><span class="px-2 py-1 bg-gray-100 rounded text-xs font-bold text-gray-600">${gl}</span></td>`;
+                tr.innerHTML = `<td class="px-6 py-2.5 font-mono text-gray-500">S${getForm(stu.classGroup)}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.subjectGroup||'-'}</td><td class="px-6 py-2.5 font-mono text-gray-500">${stu.classGroup||'-'}</td><td class="px-6 py-2.5 font-mono font-bold">${stu.classNo||stu.studentId}</td><td class="px-6 py-2.5">${stu.status==='dropped'?`<span class="text-gray-400 line-through">${stu.name}</span><span class="text-[10px] bg-red-100 text-red-600 px-1 ml-1 rounded">退修</span>`:`<span class="font-medium text-brand-orange hover:underline">${stu.name}</span>`}</td><td class="px-6 py-2.5 font-bold font-mono text-center border-l-2 border-r-2 border-brand-orange/30 bg-orange-50/30 websams-score-cell">${out}</td><td class="px-6 py-2.5 text-right"><span class="px-2 py-1 bg-gray-100 rounded text-xs font-bold text-gray-600">${gl}</span></td>`;
                 tbody.appendChild(tr);
             });
             if(vScores.length > 0) {
@@ -642,7 +642,7 @@
             const opts = window.dynamicClassOptions || []; const selHtml = `<option value="">無</option>` + opts.map(o => `<option value="${o}">${o}</option>`).join('');
             fList.forEach(s => {
                 const isD = s.status === 'dropped'; const tr = document.createElement('tr'); tr.className = isD ? "bg-red-50 opacity-60" : "border-b hover:bg-gray-50";
-                tr.innerHTML = `<td class="px-6 py-3 font-mono">中${getForm(s.classGroup)}</td><td class="px-6 py-3 font-mono">${s.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono font-bold">${s.classGroup||'-'} / ${s.classNo||'-'}</td><td class="px-6 py-3 font-mono text-gray-400 text-xs">${s.studentId}</td><td class="px-6 py-3 font-medium">${s.name||'-'} ${isD?'<span class="text-[10px] bg-red-200 text-red-800 px-1 rounded ml-1">Dropped</span>':''}</td><td class="px-6 py-3 text-center"><input type="checkbox" class="monitor-cb text-brand-orange" data-id="${s.id}" ${s.isMonitor?'checked':''} ${isD?'disabled':''}></td><td class="px-6 py-3"><select class="tgt-sel text-sm border p-1 rounded outline-none" data-id="${s.id}" ${isD?'disabled':''}>${`<option value="" ${s.targetClass===''?'selected':''}>無</option>` + opts.map(o=>`<option value="${o}" ${s.targetClass===o?'selected':''}>${o}</option>`).join('')}</select></td><td class="px-6 py-3 text-right">${!isD ? `<button class="text-red-500 font-bold drop-btn" data-id="${s.id}">Drop</button>` : `<span class="text-xs text-gray-400">已退修</span>`}</td>`;
+                tr.innerHTML = `<td class="px-6 py-3 font-mono">S${getForm(s.classGroup)}</td><td class="px-6 py-3 font-mono">${s.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono font-bold">${s.classGroup||'-'} / ${s.classNo||'-'}</td><td class="px-6 py-3 font-mono text-gray-400 text-xs">${s.studentId}</td><td class="px-6 py-3 font-medium">${s.name||'-'} ${isD?'<span class="text-[10px] bg-red-200 text-red-800 px-1 rounded ml-1">Dropped</span>':''}</td><td class="px-6 py-3 text-center"><input type="checkbox" class="monitor-cb text-brand-orange" data-id="${s.id}" ${s.isMonitor?'checked':''} ${isD?'disabled':''}></td><td class="px-6 py-3"><select class="tgt-sel text-sm border p-1 rounded outline-none" data-id="${s.id}" ${isD?'disabled':''}>${`<option value="" ${s.targetClass===''?'selected':''}>無</option>` + opts.map(o=>`<option value="${o}" ${s.targetClass===o?'selected':''}>${o}</option>`).join('')}</select></td><td class="px-6 py-3 text-right">${!isD ? `<button class="text-red-500 font-bold drop-btn" data-id="${s.id}">Drop</button>` : `<span class="text-xs text-gray-400">已退修</span>`}</td>`;
                 tbody.appendChild(tr);
             });
             document.querySelectorAll('.monitor-cb').forEach(cb=>cb.addEventListener('change', async(e)=>await setDoc(getDocRef('students', e.target.dataset.id), {isMonitor: e.target.checked}, {merge:true})));
@@ -659,7 +659,7 @@
             fList.forEach(stu => {
                 const sub = submissionsData.find(s => s.id === `${hwId}_${stu.studentId}`) || {status:'missing', lateDays:0};
                 const badge = sub.status==='missing' ? `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">未交</span>` : (sub.status==='submitted' ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">已交</span>` : `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">已補交</span>`);
-                tbody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="px-6 py-3 font-mono">中${getForm(stu.classGroup)} / ${stu.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono">${stu.classGroup}/${stu.classNo||'-'}</td><td class="px-6 py-3 font-medium">${stu.name}</td><td class="px-6 py-3">${badge}</td><td class="px-6 py-3 text-right"><select class="hw-override p-1.5 border rounded outline-none text-sm" data-hw="${hwId}" data-stu="${stu.studentId}"><option value="missing" ${sub.status==='missing'?'selected':''}>未交</option><option value="submitted" ${sub.status==='submitted'?'selected':''}>已交</option><option value="late_submitted" ${sub.status==='late_submitted'?'selected':''}>補交</option></select></td></tr>`;
+                tbody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="px-6 py-3 font-mono">S${getForm(stu.classGroup)} / ${stu.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono">${stu.classGroup}/${stu.classNo||'-'}</td><td class="px-6 py-3 font-medium">${stu.name}</td><td class="px-6 py-3">${badge}</td><td class="px-6 py-3 text-right"><select class="hw-override p-1.5 border rounded outline-none text-sm" data-hw="${hwId}" data-stu="${stu.studentId}"><option value="missing" ${sub.status==='missing'?'selected':''}>未交</option><option value="submitted" ${sub.status==='submitted'?'selected':''}>已交</option><option value="late_submitted" ${sub.status==='late_submitted'?'selected':''}>補交</option></select></td></tr>`;
             });
             document.querySelectorAll('.hw-override').forEach(sel=>sel.addEventListener('change', async(e)=>{ await setDoc(getDocRef('submissions', `${e.target.dataset.hw}_${e.target.dataset.stu}`), {studentId:e.target.dataset.stu, homeworkId:e.target.dataset.hw, status:e.target.value, lateDays:(e.target.value==='late_submitted'?1:0), updatedAt:new Date().toISOString()}, {merge:true}); }));
         }
@@ -675,7 +675,7 @@
             thead.innerHTML = hHtml + `<th class="bg-gray-100 z-20 shadow-sm">得分率</th></tr>`; tbody.innerHTML = '';
             let fList = filterAndSortStudents('grading');
             fList.forEach(stu => {
-                let rHtml = `<td class="font-mono bg-white z-10 border-r shadow-sm">中${getForm(stu.classGroup)}/${stu.subjectGroup||'-'}</td><td class="font-mono font-bold bg-white z-10 border-r shadow-sm">${stu.classGroup}/${stu.classNo||'-'}</td><td class="font-medium bg-white z-10 border-r shadow-sm">${stu.name}</td>`, tE=0, tM=0;
+                let rHtml = `<td class="font-mono bg-white z-10 border-r shadow-sm">S${getForm(stu.classGroup)}/${stu.subjectGroup||'-'}</td><td class="font-mono font-bold bg-white z-10 border-r shadow-sm">${stu.classGroup}/${stu.classNo||'-'}</td><td class="font-medium bg-white z-10 border-r shadow-sm">${stu.name}</td>`, tE=0, tM=0;
                 assessmentsData.forEach(asm => {
                     const gd = gradesData.find(g => g.id === `${asm.id}_${stu.studentId}`); let sc = '-', cls = 'text-gray-400';
                     if(gd) { sc = gd.score; if(sc==='ABS') cls='text-blue-500 font-bold'; else { cls = gd.penalty>0?'text-yellow-600 font-bold':'text-gray-900 font-bold'; tE+=Number(sc); tM+=Number(asm.maxScore); } }
