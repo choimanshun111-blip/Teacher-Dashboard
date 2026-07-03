@@ -798,20 +798,33 @@
                 const tr = document.createElement('tr'); tr.innerHTML = rHtml; tr.className="hover:bg-orange-50/20"; tbody.appendChild(tr);
             });
             
-            // 🎯 Excel-like Inline Edit (Click & Enter to next)
+            // 🎯 Excel-like Inline Edit (單擊全選 & Enter/方向鍵切換)
             document.querySelectorAll('.cell-editable').forEach(td => td.addEventListener('click', function(){
                 if(this.classList.contains('cell-editing')) return;
                 const aId = this.dataset.asm, sId = this.dataset.stu, hId = this.dataset.hw, oVal = this.textContent==='-'?'':this.textContent;
                 this.classList.add('cell-editing'); this.innerHTML = `<input type="text" class="cell-input" value="${oVal}">`;
                 const inp = this.querySelector('input'); inp.focus(); inp.select();
                 
+                let blurHandled = false;
+
                 const saveFunc = async () => {
-                    const v = inp.value.trim().toUpperCase(); this.classList.remove('cell-editing'); this.innerHTML='...';
-                    if(v==='') { this.innerHTML='-'; this.className="cell-editable text-gray-400"; return; }
+                    if (blurHandled) return;
+                    blurHandled = true;
+                    
+                    const v = inp.value.trim().toUpperCase(); 
+                    this.classList.remove('cell-editing'); 
+                    this.innerHTML = '<i class="ph ph-spinner animate-spin"></i>';
+
+                    if(v==='') { 
+                        // 修正：清空時從資料庫刪除紀錄，讓得分率即時重新計算
+                        try { await deleteDoc(getDocRef('grades', `${aId}_${sId}`)); } catch(e) {}
+                        return; 
+                    }
+                    
                     let fSc = v, raw = v, pen = 0;
                     if(v !== 'ABS') {
                         raw = Number(v); fSc = raw;
-                        if(hId) { const sub = submissionsData.find(s=>s.id===`${hId}_${sId}`); if(sub && sub.lateDays>0){ pen=sub.lateDays; fSc=Math.max(0, raw-pen); showToast(`安全網扣 ${pen} 分`, "error"); } }
+                        if(hId) { const sub = submissionsData.find(s=>s.id===`${hId}_${sId}`); if(sub && sub.lateDays>0){ pen=sub.lateDays; fSc=Math.max(0, raw-pen); showToast(`安全網觸發：遲交扣 ${pen} 分`, "error"); } }
                     }
                     await setDoc(getDocRef('grades', `${aId}_${sId}`), { assessmentId: aId, studentId: sId, score: fSc, rawScore: raw, penalty: pen, updatedAt: new Date().toISOString() }, {merge:true});
                 };
@@ -819,12 +832,42 @@
                 inp.addEventListener('blur', saveFunc);
                 inp.addEventListener('keydown', (e) => { 
                     if(e.key === 'Enter' || e.key === 'ArrowDown') { 
-                        e.preventDefault(); inp.blur(); 
-                        const nextRow = this.parentElement.nextElementSibling;
-                        if(nextRow) { const nextTd = nextRow.cells[this.cellIndex]; if(nextTd && nextTd.classList.contains('cell-editable')) setTimeout(() => nextTd.click(), 50); }
+                        e.preventDefault(); 
+                        // 在觸發重繪前，先記住下一位學生的 ID
+                        const nextTr = this.parentElement.nextElementSibling;
+                        if(nextTr) {
+                            const nextTd = nextTr.querySelector(`td[data-asm="${aId}"]`);
+                            if(nextTd) {
+                                window.pendingFocusStuId = nextTd.dataset.stu;
+                                window.pendingFocusAsmId = aId;
+                            }
+                        }
+                        saveFunc(); 
+                    } else if(e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        // 支援按「上」回到上一個學生
+                        const prevTr = this.parentElement.previousElementSibling;
+                        if(prevTr) {
+                            const prevTd = prevTr.querySelector(`td[data-asm="${aId}"]`);
+                            if(prevTd) {
+                                window.pendingFocusStuId = prevTd.dataset.stu;
+                                window.pendingFocusAsmId = aId;
+                            }
+                        }
+                        saveFunc();
                     }
                 });
             }));
+
+            // 當 Firebase 瞬間把表格重建完畢後，自動幫您點開記憶的下一個格子
+            if (window.pendingFocusStuId && window.pendingFocusAsmId) {
+                setTimeout(() => {
+                    const targetTd = document.querySelector(`td.cell-editable[data-asm="${window.pendingFocusAsmId}"][data-stu="${window.pendingFocusStuId}"]`);
+                    if (targetTd) targetTd.click();
+                    window.pendingFocusStuId = null;
+                    window.pendingFocusAsmId = null;
+                }, 100); // 緩衝時間讓畫面穩定
+            }
         }
 
         document.getElementById('btn-import-exam').addEventListener('click', ()=>document.getElementById('modal-blueprint').classList.remove('hidden'));
