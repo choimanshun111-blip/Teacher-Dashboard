@@ -266,10 +266,16 @@
 
             <!-- VIEW 4: DYNAMIC GRADING -->
             <div id="view-grading-teacher" class="view-section">
-                <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border">
-                    <div class="flex gap-3">
-                        <button id="btn-add-assessment" class="bg-brand-orange hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2"><i class="ph ph-plus-circle text-lg"></i>新增評核欄位</button>
-                        <button id="btn-import-exam" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2"><i class="ph ph-file-xls text-lg"></i>大考藍圖匯入</button>
+                <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border flex-wrap gap-4">
+                    <div class="flex flex-wrap gap-3">
+                        <button id="btn-add-assessment" class="bg-brand-orange hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2"><i class="ph ph-plus-circle text-lg"></i>新增評核</button>
+                        <button id="btn-import-exam" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="根據大考藍圖自動加總各題分數"><i class="ph ph-file-xls text-lg"></i>大考藍圖匯入</button>
+                        
+                        <div class="w-px h-8 bg-gray-300 my-auto hidden sm:block"></div>
+                        
+                        <!-- 🆕 新增：雙向對接 Excel 按鈕 -->
+                        <button id="btn-export-grades" class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="將打分板匯出為 Excel 備份或離線入分"><i class="ph ph-export text-lg"></i>匯出為 Excel</button>
+                        <button id="btn-import-grades" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="上載含有評核名稱的 Excel 進行批次入分"><i class="ph ph-import text-lg"></i>Excel 批次入分</button>
                     </div>
                     <button id="btn-publish-all" class="bg-brand-black hover:bg-gray-800 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 tooltip"><i class="ph ph-rocket-launch text-lg"></i>一鍵發佈所有草稿</button>
                 </div>
@@ -319,12 +325,37 @@
     </main>
 
     <!-- Modals -->
+    <!-- Add Assessment -->
     <div id="modal-assessment" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-gray-50 rounded-t-xl"><h3 class="text-lg font-bold flex items-center gap-2"><i class="ph ph-plus-circle text-brand-orange"></i>新增評核項目</h3><button class="text-gray-400 hover:text-gray-600 btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4"><div><label class="block text-sm font-medium mb-1">評核名稱 (例: Term 1 Test)</label><input type="text" id="asmt-title" class="w-full p-2 border rounded-lg outline-none"></div><div class="flex gap-4"><div class="flex-1"><label class="block text-sm font-medium mb-1">滿分</label><input type="number" id="asmt-max" class="w-full p-2 border rounded-lg outline-none" value="100"></div><div class="flex-1"><label class="block text-sm font-medium mb-1">標籤</label><select id="asmt-tag" class="w-full p-2 border rounded-lg outline-none"><option value="SDL">SDL Worksheet</option><option value="Quiz">Short Quiz</option><option value="Test">Term Test</option><option value="Exam">Exam</option></select></div><div class="flex-1"><label class="block text-sm font-medium mb-1">發佈對象</label><select id="asmt-target" class="w-full p-2 border rounded-lg outline-none dynamic-target-dropdown"><option value="ALL">全校/全級</option></select></div></div><div><label class="block text-sm font-medium mb-1 text-yellow-600">連結功課(遲交扣分)</label><select id="asmt-linked-hw" class="w-full p-2 border border-yellow-300 rounded-lg bg-yellow-50 outline-none"><option value="">-- 不連結 --</option></select></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal text-gray-700">取消</button><button id="btn-save-asmt" class="px-4 py-2 bg-brand-orange text-white rounded-lg">建立草稿</button></div></div></div>
 
-    <div id="modal-blueprint" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-blue-50 rounded-t-xl"><h3 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="ph ph-file-xls"></i>大考藍圖匯入</h3><button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><div class="bg-gray-100 p-3 rounded-lg"><p class="text-gray-700 font-bold mb-1"><i class="ph ph-info"></i> 這是什麼？</p><p class="text-gray-600">系統會讀取您日常改卷的 Excel，根據您設定的「藍圖」，自動把各題分數加總成一個完整的測考成績寫入網格，免去重複打分。</p></div><div><label class="block font-medium mb-1">大考名稱</label><input type="text" id="bp-title" class="w-full p-2 border rounded-lg" placeholder="例：Term 1 Final Exam"></div><div><label class="block font-medium mb-1">藍圖結構 (題號:滿分)</label><input type="text" id="bp-config" class="w-full p-2 border rounded-lg font-mono" placeholder="例：Q1:5, Q2:10, MC:30"><p class="text-[10px] text-gray-500 mt-1">注意：上載的 Excel 第一列必須包含這些標題 (如 Q1, Q2)，且必須有 <span class="font-bold">Class No.</span> 欄位。</p></div><div class="border-2 border-dashed border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 cursor-pointer relative transition-colors"><input type="file" id="bp-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls"><i class="ph ph-upload-simple text-3xl text-blue-400 mb-2"></i><p class="font-medium text-blue-600">上載 Excel 批改記錄表</p></div></div></div></div>
+    <!-- Excel Blueprint Import -->
+    <div id="modal-blueprint" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-blue-50 rounded-t-xl"><h3 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="ph ph-file-xls"></i>大考藍圖匯入</h3><button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><div class="bg-gray-100 p-3 rounded-lg"><p class="text-gray-700 font-bold mb-1"><i class="ph ph-info"></i> 這是什麼？</p><p class="text-gray-600">系統會讀取您日常改卷的 Excel，根據您設定的「藍圖」，自動把各題分數加總成一個完整的測考成績寫入網格，免去重複打分。</p></div><div><label class="block font-medium mb-1">大考名稱</label><input type="text" id="bp-title" class="w-full p-2 border rounded-lg" placeholder="例：Term 1 Final Exam"></div><div><label class="block font-medium mb-1">藍圖結構 (題號:滿分)</label><input type="text" id="bp-config" class="w-full p-2 border rounded-lg font-mono" placeholder="例：Q1:5, Q2:10, MC:30"><p class="text-[10px] text-gray-500 mt-1">注意：上載的 Excel 第一列必須包含這些標題 (如 Q1, Q2)，且必須有 <span class="font-bold">Class No.</span> 或 <span class="font-bold">Student ID</span> 欄位。</p></div><div class="border-2 border-dashed border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 cursor-pointer relative transition-colors"><input type="file" id="bp-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls"><i class="ph ph-upload-simple text-3xl text-blue-400 mb-2"></i><p class="font-medium text-blue-600">上載 Excel 批改記錄表</p></div></div></div></div>
 
+    <!-- 🆕 Excel 批次入分 (General Import) -->
+    <div id="modal-import-grades" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg">
+            <div class="p-5 border-b flex justify-between items-center bg-indigo-50 rounded-t-xl">
+                <h3 class="text-lg font-bold text-indigo-800 flex items-center gap-2"><i class="ph ph-import"></i>Excel 批次入分</h3>
+                <button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-sm">
+                <div class="bg-gray-100 p-3 rounded-lg">
+                    <p class="text-gray-700 font-bold mb-1"><i class="ph ph-info"></i> 完美對接教學</p>
+                    <p class="text-gray-600">建議您先使用打分板右上角的 <strong>「匯出為 Excel」</strong> 下載表格，在 Excel 填好分數後，直接上載該檔案。<br>系統會自動辨識 <strong>學號 (Student ID)</strong> 與 <strong>Quiz/評核名稱 (標題)</strong>，並將分數瞬間無縫寫入資料庫！</p>
+                </div>
+                <div class="border-2 border-dashed border-indigo-200 rounded-xl p-6 text-center hover:bg-indigo-50 cursor-pointer relative transition-colors">
+                    <input type="file" id="import-grades-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls, .csv">
+                    <i class="ph ph-upload-simple text-3xl text-indigo-400 mb-2"></i>
+                    <p class="font-medium text-indigo-600">選擇或拖曳填好分數的 Excel 成績表</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Report Card -->
     <div id="modal-report-card" class="fixed inset-0 bg-black/60 z-[60] hidden flex flex-col items-center justify-center backdrop-blur-sm py-4"><div class="w-full max-w-[210mm] bg-white rounded-t-xl p-4 flex justify-between items-center shadow-lg z-[61]"><h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="ph ph-student text-brand-orange"></i>學術畫像報告</h3><div class="flex gap-3"><button id="btn-export-pdf" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"><i class="ph ph-file-pdf"></i> 下載 PDF</button><button class="btn-close-modal bg-gray-200 px-4 py-2 rounded-lg text-gray-700">關閉</button></div></div><div class="w-full max-w-[210mm] bg-white overflow-y-auto flex-1 rounded-b-xl shadow-2xl relative scrollbar-hide"><div id="pdf-content" class="p-12 bg-white text-gray-900 w-full min-h-[297mm] mx-auto box-border" style="aspect-ratio: 210/297;"><div class="border-b-4 border-brand-orange pb-6 mb-8 flex justify-between items-end"><div><h1 class="text-4xl font-black tracking-wider text-brand-black">STUDENT REPORT</h1><p class="text-gray-500 mt-2 text-lg">Academic Performance Analytics</p></div><div class="text-right"><p class="text-3xl font-bold text-brand-orange" id="rep-name">Name</p><p class="text-xl font-mono text-gray-600 mt-1">Class: <span id="rep-class">4A</span> | No: <span id="rep-id">01</span></p></div></div><div class="grid grid-cols-2 gap-10 mb-10"><div class="space-y-6"><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Overall Analyzed Score</h4><p class="text-5xl font-black font-mono text-gray-900" id="rep-total">--%</p></div><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Performance Level</h4><p class="text-lg">This student performs at a <strong class="text-brand-orange" id="rep-grade-letter">--</strong> based on cohort percentile ranking.</p></div></div><div class="flex items-center justify-center p-4"><canvas id="radarChart" width="300" height="300"></canvas></div></div><div class="mb-8"><h4 class="text-xl font-bold border-l-4 border-brand-orange pl-3 mb-4">Assessment Breakdown</h4><table class="w-full text-left text-sm border-collapse"><thead class="bg-gray-100 text-gray-700"><tr><th class="p-3 border">Assessment Category</th><th class="p-3 border text-center">Score Ratio (%)</th></tr></thead><tbody id="rep-tbody" class="divide-y"></tbody></table></div><div class="text-center text-gray-400 text-sm mt-auto pt-10 border-t"><p>Generated by Roster Engine | <span id="rep-date"></span></p></div></div></div></div>
     
+    <!-- Selective Reset DB -->
     <div id="modal-reset-db" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-red-50 rounded-t-xl"><h3 class="text-lg font-bold text-red-800 flex items-center gap-2"><i class="ph ph-trash text-xl"></i>升學與畢業資料清理</h3><button class="btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><p class="text-gray-800 font-medium">您可以選擇性地刪除特定級別（如畢業班）的資料，而保留其他學生的歷史成績，或是全庫清空。</p><p class="text-red-600 font-bold">⚠️ 執行前，建議先「下載備份」！</p><div><label class="block font-medium mb-1 text-gray-500">選擇清理範圍：</label><select id="reset-scope" class="w-full p-2 border border-gray-300 rounded-lg outline-none mb-3"><option value="ALL">🚨 清空全校所有資料 (完全重置)</option></select></div><div><label class="block font-medium mb-1 text-gray-500">請輸入 <span class="font-bold text-red-600">DELETE</span> 確認：</label><input type="text" id="reset-confirm-text" class="w-full p-2 border border-red-300 rounded-lg outline-none uppercase font-bold text-center text-red-600 focus:ring-2 focus:ring-red-200"></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal">取消</button><button id="btn-execute-reset" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50" disabled>確認刪除</button></div></div></div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-3 pointer-events-none z-[200]"></div>
@@ -432,7 +463,7 @@
             unsubStudents = onSnapshot(getColRef('students'), s => { studentsData = s.docs.map(d=>({id:d.id, ...d.data()})); updateDynamicFilters(); renderAllViews(); }, errHandler);
             unsubHomeworks = onSnapshot(getColRef('homeworks'), s => { homeworksData = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>new Date(b.dueDate)-new Date(a.dueDate)); populateHwDropdowns(); renderAllViews(); }, errHandler);
             unsubSubmissions = onSnapshot(getColRef('submissions'), s => { submissionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderAllViews(); }, errHandler);
-            unsubAssessments = onSnapshot(getColRef('assessments'), s => { assessmentsData = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)); renderAlignerConfig(); renderAllViews(); }, errHandler);
+            unsubAssessments = onSnapshot(getColRef('assessments'), s => { assessmentsData = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)); renderAlignerConfig(); renderAllViews(); }, errHandler);
             unsubGrades = onSnapshot(getColRef('grades'), s => { gradesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderAllViews(); }, errHandler);
             unsubTimetable = onSnapshot(getColRef('timetable'), s => { timetableData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTimetable(); }, errHandler);
         }
@@ -778,6 +809,98 @@
         
         window.deleteAsm = async (id) => { if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); } }
 
+        // 🆕 Dynamic Grading: Export & Import Logic
+        document.getElementById('btn-export-grades').addEventListener('click', () => {
+            let fList = filterAndSortStudents('grading');
+            if(fList.length === 0) return showToast("沒有學生資料可匯出", "error");
+
+            let exportData = [];
+            fList.forEach(stu => {
+                let row = {
+                    '級別': `S${getForm(stu.classGroup)}`,
+                    '組別': stu.subjectGroup || '',
+                    '班別': stu.classGroup || '',
+                    '班號': stu.classNo || '',
+                    '學號 (Student ID)': stu.studentId,
+                    '姓名': stu.name
+                };
+                assessmentsData.forEach(asm => {
+                    if(isTargetMatch(asm.target, stu)) {
+                        const gd = gradesData.find(g => g.id === `${asm.id}_${stu.studentId}`);
+                        row[asm.title] = gd && gd.score !== undefined ? gd.score : '';
+                    } else {
+                        row[asm.title] = 'N.A.';
+                    }
+                });
+                exportData.push(row);
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Grades");
+            XLSX.writeFile(wb, `DynamicGrading_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast("✅ 成績表匯出成功", "success");
+            logAction("匯出 Dynamic Grading 成績表");
+        });
+
+        document.getElementById('btn-import-grades').addEventListener('click', () => document.getElementById('modal-import-grades').classList.remove('hidden'));
+
+        document.getElementById('import-grades-file').addEventListener('change', (e) => {
+            if(e.target.files.length === 0) return;
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const data = new Uint8Array(ev.target.result);
+                    const wb = XLSX.read(data, {type:'array'});
+                    const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" });
+
+                    let updateCount = 0;
+                    let promises = [];
+
+                    for (const row of json) {
+                        let rawId = String(row['學號 (Student ID)'] || row['學號'] || row['Student ID'] || row['班號'] || row['Class No.'] || '');
+                        if (!rawId) continue;
+
+                        let targetStu = studentsData.find(s => s.studentId === rawId) || studentsData.find(s => s.classNo === rawId);
+                        if (!targetStu) continue;
+                        let finalId = targetStu.studentId;
+
+                        for (const key in row) {
+                            if (['級別', '組別', '班別', '班號', '學號 (Student ID)', '學號', 'Student ID', '姓名'].includes(key.trim())) continue;
+
+                            const asm = assessmentsData.find(a => a.title.trim().toLowerCase() === key.trim().toLowerCase());
+                            if (asm) {
+                                let val = String(row[key]).trim().toUpperCase();
+                                if(val !== '' && val !== 'N.A.') {
+                                    let fSc = val, raw = val;
+                                    if(val !== 'ABS') {
+                                        raw = Number(val);
+                                        fSc = raw;
+                                    }
+                                    promises.push(setDoc(getDocRef('grades', `${asm.id}_${finalId}`), {
+                                        assessmentId: asm.id, studentId: finalId, score: fSc, rawScore: raw, penalty: 0, updatedAt: new Date().toISOString()
+                                    }, {merge: true}));
+                                    updateCount++;
+                                }
+                            }
+                        }
+                    }
+                    
+                    showToast("正在寫入資料庫...", "info");
+                    await Promise.all(promises);
+                    
+                    showToast(`✅ 成功匯入 ${updateCount} 筆成績！`, "success");
+                    document.getElementById('modal-import-grades').classList.add('hidden');
+                    e.target.value = '';
+                    logAction("使用 Excel 批次入分");
+                } catch(error) {
+                    showToast("匯入失敗，請檢查 Excel 格式", "error");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
         function renderGradingBoard() {
             const thead = document.getElementById('grading-thead'), tbody = document.getElementById('grading-tbody');
             let hHtml = `<tr><th class="w-20 bg-gray-100 z-30 shadow-sm border-r">級/組</th><th class="w-24 bg-gray-100 z-30 shadow-sm border-r">班別班號</th><th class="w-32 bg-gray-100 z-30 shadow-sm border-r">姓名</th>`;
@@ -878,7 +1001,7 @@
                 const json = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(ev.target.result), {type:'array'}).Sheets[XLSX.read(new Uint8Array(ev.target.result), {type:'array'}).SheetNames[0]]);
                 const aId = `asm_${Date.now()}`; await setDoc(getDocRef('assessments', aId), {title:t, maxScore:tM, tag:'Exam', target:'ALL', status:'draft', blueprint:bp, createdAt:new Date().toISOString()});
                 json.forEach(async row => {
-                    let sId = String(row['Student ID']||row['學號']||row['班號']||''); if(!sId) return; 
+                    let sId = String(row['Student ID']||row['學號 (Student ID)']||row['學號']||row['班號']||''); if(!sId) return; 
                     let sTot=0, bk={}; for(let q in bp){ if(row[q]!==undefined){bk[q]=Number(row[q]); sTot+=Number(row[q]);}}
                     const targetStu = studentsData.find(s => s.classNo === sId) || studentsData.find(s => s.studentId === sId);
                     const finalId = targetStu ? targetStu.studentId : sId; 
