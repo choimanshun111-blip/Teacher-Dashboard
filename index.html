@@ -31,7 +31,8 @@
         .grading-grid th:nth-child(2), .grading-grid td:nth-child(2) { left: 100px; }
         .cell-editable { cursor: cell; transition: background-color 0.2s; }
         .cell-editable:hover { background-color: #FFF7ED; }
-        .cell-input { width: 100%; height: 100%; border: 2px solid #F97316; outline: none; text-align: center; font-weight: bold; background: #FFF7ED; padding: 0; }
+        .cell-editing { padding: 0 !important; }
+        .cell-input { width: 100%; height: 100%; border: 2px solid #F97316; outline: none; text-align: center; font-weight: bold; background: #FFF7ED; padding: 0.5rem; }
         #toast-container { z-index: 9999; }
         .toast-enter { animation: toastSlideIn 0.3s ease-out forwards; }
         .toast-leave { animation: toastSlideOut 0.3s ease-in forwards; }
@@ -181,9 +182,8 @@
                             <p class="text-xs text-gray-500 mt-1">依照「班別+班號」嚴格排序。ABS顯示 `[-]`。參考等級按目前名單 <span class="font-bold text-brand-orange">Top 25%(4), 25-50%(3), 50-75%(2), Bottom 25%(1)</span> 曲線分配。</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <select id="aligner-form-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-form-dropdown"><option value="ALL">所有級別</option></select>
-                            <select id="aligner-group-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-group-dropdown"><option value="ALL">所有組別(X1/X2)</option></select>
-                            <select id="aligner-class-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-class-dropdown"><option value="ALL">顯示全部班別</option></select>
+                            <!-- Data Aligner uses the smart target dropdown to match other parts -->
+                            <select id="aligner-target-filter" class="p-2 text-sm border rounded-lg outline-none bg-white font-bold text-brand-orange dynamic-target-dropdown"><option value="ALL">顯示所有學生</option></select>
                             <button id="btn-copy-websams" class="bg-brand-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-colors">
                                 <i class="ph ph-copy text-lg"></i> 複製分數欄
                             </button>
@@ -219,9 +219,7 @@
                         <div class="p-6 border-b flex justify-between items-center bg-gray-50">
                             <h3 class="text-lg font-semibold flex items-center gap-2"><i class="ph ph-users text-brand-orange"></i>實時名單與權限</h3>
                             <div class="flex items-center gap-2">
-                                <select id="roster-form-filter" class="p-1.5 text-sm border rounded-lg outline-none bg-white dynamic-form-dropdown"><option value="ALL">所有級別</option></select>
-                                <select id="roster-group-filter" class="p-1.5 text-sm border rounded-lg outline-none bg-white dynamic-group-dropdown"><option value="ALL">所有組別</option></select>
-                                <select id="roster-class-filter" class="p-1.5 text-sm border rounded-lg outline-none bg-white dynamic-class-dropdown"><option value="ALL">全部班別</option></select>
+                                <select id="roster-target-filter" class="p-1.5 text-sm border rounded-lg outline-none bg-white dynamic-target-dropdown"><option value="ALL">顯示所有學生</option></select>
                                 <span class="text-sm bg-gray-200 px-3 py-1 rounded-full font-mono" id="student-count">0 人</span>
                             </div>
                         </div>
@@ -242,7 +240,7 @@
                         <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold flex items-center gap-2"><i class="ph ph-plus-circle text-brand-orange"></i>發布新功課</h3></div>
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                             <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">功課名稱</label><input type="text" id="new-hw-title" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none"></div>
-                            <div class="col-span-1"><label class="block text-sm font-medium text-gray-700 mb-1">發佈對象</label><select id="new-hw-target" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none dynamic-target-dropdown"><option value="ALL">全級/全校</option></select></div>
+                            <div class="col-span-1"><label class="block text-sm font-medium text-gray-700 mb-1">發佈對象 (班別/組別)</label><select id="new-hw-target" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none dynamic-target-dropdown"><option value="ALL">全級/全校</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">截止時間</label><input type="datetime-local" id="new-hw-due" class="w-full p-2.5 border rounded-lg focus:border-brand-orange outline-none"></div>
                             <div><button id="btn-create-hw" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-medium p-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors"><i class="ph ph-paper-plane-right"></i> 發布</button></div>
                         </div>
@@ -255,9 +253,7 @@
                             <div class="flex gap-2">
                                 <select id="filter-hw-select" class="w-64 p-2 text-sm border rounded-lg outline-none bg-white"><option value="">-- 請選擇功課 --</option></select>
                                 <button id="btn-delete-hw" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-2 rounded-lg transition-colors hidden" title="刪除此功課"><i class="ph ph-trash text-lg"></i></button>
-                                <select id="hw-form-filter" class="w-24 p-2 text-sm border rounded-lg outline-none bg-white dynamic-form-dropdown ml-2"><option value="ALL">所有級別</option></select>
-                                <select id="hw-group-filter" class="w-28 p-2 text-sm border rounded-lg outline-none bg-white dynamic-group-dropdown"><option value="ALL">所有組別</option></select>
-                                <select id="hw-class-filter" class="w-28 p-2 text-sm border rounded-lg outline-none bg-white dynamic-class-dropdown"><option value="ALL">全部班別</option></select>
+                                <!-- HW Table dynamically filters based on HW target, no extra dropdown needed -->
                             </div>
                         </div>
                         <div class="overflow-x-auto"><table class="w-full text-left">
@@ -279,11 +275,12 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
                     <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
-                        <h3 class="font-bold flex items-center gap-2"><i class="ph ph-grid-nine text-brand-orange text-xl"></i>動態評核網格 (游標移至標題可刪除)</h3>
+                        <div>
+                            <h3 class="font-bold flex items-center gap-2"><i class="ph ph-grid-nine text-brand-orange text-xl"></i>動態評核網格 (單擊儲存格即可打分)</h3>
+                            <p class="text-xs text-gray-500 mt-1">輸入後按 <strong>Enter 或方向鍵 ↓</strong> 可直接跳至下一位學生。滑鼠移至標題可刪除該項目。</p>
+                        </div>
                         <div class="flex gap-2">
-                            <select id="grading-form-filter" class="p-1.5 text-xs border rounded-lg outline-none bg-white dynamic-form-dropdown"><option value="ALL">所有級別</option></select>
-                            <select id="grading-group-filter" class="p-1.5 text-xs border rounded-lg outline-none bg-white dynamic-group-dropdown"><option value="ALL">所有組別</option></select>
-                            <select id="grading-class-filter" class="p-1.5 text-xs border rounded-lg outline-none bg-white dynamic-class-dropdown"><option value="ALL">全部班別</option></select>
+                            <select id="grading-target-filter" class="p-1.5 text-xs border rounded-lg outline-none bg-white dynamic-target-dropdown"><option value="ALL">顯示所有學生</option></select>
                         </div>
                     </div>
                     <div class="overflow-x-auto max-h-[60vh] relative">
@@ -301,10 +298,11 @@
                     <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border p-6 h-fit">
                         <h3 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b pb-3"><i class="ph ph-calendar-plus text-brand-orange text-xl"></i>安排新測考/提醒</h3>
                         <div class="space-y-4">
-                            <div><label class="block text-sm font-medium text-gray-700 mb-1">發佈對象</label><select id="event-class" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange dynamic-target-dropdown text-sm"><option value="ALL">全部班別</option></select></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1">發佈對象 (班別/組別)</label><select id="event-class" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange dynamic-target-dropdown text-sm"><option value="ALL">全部班別</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">日期</label><input type="date" id="event-date" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">類型</label><select id="event-type" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"><option value="Quiz">📝 小測 Quiz</option><option value="Test">📄 大考 Test</option><option value="Dictation">✍️ 默書 Dictation</option><option value="Reminder">🔔 一般提醒</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">標題</label><input type="text" id="event-title" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm" placeholder="例如：Chapter 3 小測"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1">考核範圍 / 備註細節</label><textarea id="event-details" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm" placeholder="例如：溫習 Chapter 7 Notes 第 42-50 頁" rows="2"></textarea></div>
                             <div><button id="btn-create-event" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 mt-2 transition-colors"><i class="ph ph-paper-plane-right"></i> 發佈至行事曆</button></div>
                         </div>
                     </div>
@@ -323,7 +321,7 @@
     <!-- Modals -->
     <div id="modal-assessment" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-gray-50 rounded-t-xl"><h3 class="text-lg font-bold flex items-center gap-2"><i class="ph ph-plus-circle text-brand-orange"></i>新增評核項目</h3><button class="text-gray-400 hover:text-gray-600 btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4"><div><label class="block text-sm font-medium mb-1">評核名稱 (例: Term 1 Test)</label><input type="text" id="asmt-title" class="w-full p-2 border rounded-lg outline-none"></div><div class="flex gap-4"><div class="flex-1"><label class="block text-sm font-medium mb-1">滿分</label><input type="number" id="asmt-max" class="w-full p-2 border rounded-lg outline-none" value="100"></div><div class="flex-1"><label class="block text-sm font-medium mb-1">標籤</label><select id="asmt-tag" class="w-full p-2 border rounded-lg outline-none"><option value="SDL">SDL Worksheet</option><option value="Quiz">Short Quiz</option><option value="Test">Term Test</option><option value="Exam">Exam</option></select></div><div class="flex-1"><label class="block text-sm font-medium mb-1">發佈對象</label><select id="asmt-target" class="w-full p-2 border rounded-lg outline-none dynamic-target-dropdown"><option value="ALL">全校/全級</option></select></div></div><div><label class="block text-sm font-medium mb-1 text-yellow-600">連結功課(遲交扣分)</label><select id="asmt-linked-hw" class="w-full p-2 border border-yellow-300 rounded-lg bg-yellow-50 outline-none"><option value="">-- 不連結 --</option></select></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal text-gray-700">取消</button><button id="btn-save-asmt" class="px-4 py-2 bg-brand-orange text-white rounded-lg">建立草稿</button></div></div></div>
 
-    <div id="modal-blueprint" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-blue-50 rounded-t-xl"><h3 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="ph ph-file-xls"></i>大考成績匯入</h3><button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><p class="text-gray-600 bg-gray-100 p-3 rounded-lg"><i class="ph ph-info"></i> 根據藍圖加總，系統將自動比對 Email 或班號</p><div><label class="block font-medium mb-1">大考名稱</label><input type="text" id="bp-title" class="w-full p-2 border rounded-lg"></div><div><label class="block font-medium mb-1">藍圖結構 (題號:滿分)</label><input type="text" id="bp-config" class="w-full p-2 border rounded-lg font-mono" placeholder="Q1:5, Q2:10"></div><div class="border-2 border-dashed border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 cursor-pointer relative"><input type="file" id="bp-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls"><i class="ph ph-upload-simple text-3xl text-blue-400 mb-2"></i><p class="font-medium text-blue-600">上載 Excel 批改記錄表</p></div></div></div></div>
+    <div id="modal-blueprint" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-blue-50 rounded-t-xl"><h3 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="ph ph-file-xls"></i>大考藍圖匯入</h3><button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><div class="bg-gray-100 p-3 rounded-lg"><p class="text-gray-700 font-bold mb-1"><i class="ph ph-info"></i> 這是什麼？</p><p class="text-gray-600">系統會讀取您日常改卷的 Excel，根據您設定的「藍圖」，自動把各題分數加總成一個完整的測考成績寫入網格，免去重複打分。</p></div><div><label class="block font-medium mb-1">大考名稱</label><input type="text" id="bp-title" class="w-full p-2 border rounded-lg" placeholder="例：Term 1 Final Exam"></div><div><label class="block font-medium mb-1">藍圖結構 (題號:滿分)</label><input type="text" id="bp-config" class="w-full p-2 border rounded-lg font-mono" placeholder="例：Q1:5, Q2:10, MC:30"><p class="text-[10px] text-gray-500 mt-1">注意：上載的 Excel 第一列必須包含這些標題 (如 Q1, Q2)，且必須有 <span class="font-bold">Class No.</span> 欄位。</p></div><div class="border-2 border-dashed border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 cursor-pointer relative transition-colors"><input type="file" id="bp-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls"><i class="ph ph-upload-simple text-3xl text-blue-400 mb-2"></i><p class="font-medium text-blue-600">上載 Excel 批改記錄表</p></div></div></div></div>
 
     <div id="modal-report-card" class="fixed inset-0 bg-black/60 z-[60] hidden flex flex-col items-center justify-center backdrop-blur-sm py-4"><div class="w-full max-w-[210mm] bg-white rounded-t-xl p-4 flex justify-between items-center shadow-lg z-[61]"><h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="ph ph-student text-brand-orange"></i>學術畫像報告</h3><div class="flex gap-3"><button id="btn-export-pdf" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"><i class="ph ph-file-pdf"></i> 下載 PDF</button><button class="btn-close-modal bg-gray-200 px-4 py-2 rounded-lg text-gray-700">關閉</button></div></div><div class="w-full max-w-[210mm] bg-white overflow-y-auto flex-1 rounded-b-xl shadow-2xl relative scrollbar-hide"><div id="pdf-content" class="p-12 bg-white text-gray-900 w-full min-h-[297mm] mx-auto box-border" style="aspect-ratio: 210/297;"><div class="border-b-4 border-brand-orange pb-6 mb-8 flex justify-between items-end"><div><h1 class="text-4xl font-black tracking-wider text-brand-black">STUDENT REPORT</h1><p class="text-gray-500 mt-2 text-lg">Academic Performance Analytics</p></div><div class="text-right"><p class="text-3xl font-bold text-brand-orange" id="rep-name">Name</p><p class="text-xl font-mono text-gray-600 mt-1">Class: <span id="rep-class">4A</span> | No: <span id="rep-id">01</span></p></div></div><div class="grid grid-cols-2 gap-10 mb-10"><div class="space-y-6"><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Overall Analyzed Score</h4><p class="text-5xl font-black font-mono text-gray-900" id="rep-total">--%</p></div><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Performance Level</h4><p class="text-lg">This student performs at a <strong class="text-brand-orange" id="rep-grade-letter">--</strong> based on cohort percentile ranking.</p></div></div><div class="flex items-center justify-center p-4"><canvas id="radarChart" width="300" height="300"></canvas></div></div><div class="mb-8"><h4 class="text-xl font-bold border-l-4 border-brand-orange pl-3 mb-4">Assessment Breakdown</h4><table class="w-full text-left text-sm border-collapse"><thead class="bg-gray-100 text-gray-700"><tr><th class="p-3 border">Assessment Category</th><th class="p-3 border text-center">Score Ratio (%)</th></tr></thead><tbody id="rep-tbody" class="divide-y"></tbody></table></div><div class="text-center text-gray-400 text-sm mt-auto pt-10 border-t"><p>Generated by Roster Engine | <span id="rep-date"></span></p></div></div></div></div>
     
@@ -360,20 +358,37 @@
         let radarChartInstance = null;
         let alignerMode = 'single'; 
 
-        const getColRef = (colName) => currentUser ? (isCanvasEnv ? collection(db, 'artifacts', systemAppId, 'users', currentUser.uid, colName) : collection(db, 'users', currentUser.uid, colName)) : null;
-        const getDocRef = (colName, docId) => currentUser ? (isCanvasEnv ? doc(db, 'artifacts', systemAppId, 'users', currentUser.uid, colName, String(docId)) : doc(db, 'users', currentUser.uid, colName, String(docId))) : null;
-
         // Extract Form (e.g., '4A' -> '4')
         function getForm(cls) { if(!cls) return ''; const m = cls.match(/\d+/); return m ? m[0] : ''; }
 
-        // Check if target matches student
+        // Helper: Convert display string to readable format
+        function formatTargetDisplay(target) {
+            if(!target || target === 'ALL') return '全級/全校';
+            if(target.startsWith('FORM_')) return `S${target.replace('FORM_','')}`;
+            if(target.startsWith('GROUP_')) { const p = target.split('_'); return `S${p[1]} ${p[2]}`; }
+            if(target.startsWith('CLASS_')) return target.replace('CLASS_','');
+            return target;
+        }
+
+        // 🎯 核心過濾邏輯：匹配特定組別 (如 S4 X1) 或 班別 (如 3A)
         function isTargetMatch(target, stu) {
             if(!target || target === 'ALL') return true;
-            if(target === stu.classGroup) return true; 
-            if(target === getForm(stu.classGroup)) return true; 
-            if(target === stu.subjectGroup) return true; 
+            if(target.startsWith('FORM_')) return getForm(stu.classGroup) === target.replace('FORM_','');
+            if(target.startsWith('GROUP_')) {
+                const parts = target.split('_'); // GROUP_4_X1
+                return getForm(stu.classGroup) === parts[1] && stu.subjectGroup === parts[2];
+            }
+            if(target.startsWith('CLASS_')) return stu.classGroup === target.replace('CLASS_','');
+
+            // Fallback
+            if(target === stu.classGroup) return true;
+            if(target === getForm(stu.classGroup)) return true;
+            if(target === stu.subjectGroup) return true;
             return false;
         }
+
+        const getColRef = (colName) => currentUser ? (isCanvasEnv ? collection(db, 'artifacts', systemAppId, 'users', currentUser.uid, colName) : collection(db, 'users', currentUser.uid, colName)) : null;
+        const getDocRef = (colName, docId) => currentUser ? (isCanvasEnv ? doc(db, 'artifacts', systemAppId, 'users', currentUser.uid, colName, String(docId)) : doc(db, 'users', currentUser.uid, colName, String(docId))) : null;
 
         onAuthStateChanged(auth, (user) => { 
             const overlay = document.getElementById('login-overlay');
@@ -425,33 +440,56 @@
         async function logAction(action) { if (!currentUser) return; try { await addDoc(getColRef('logs'), { timestamp: new Date().toISOString(), operator: currentUser.email, action }); } catch(e){} }
         
         function populateHwDropdowns() {
-            const hwsHtml = `<option value="">-- 請選擇功課 --</option>` + homeworksData.map(h => `<option value="${h.id}">${h.title}</option>`).join('');
+            const hwsHtml = `<option value="">-- 請選擇功課 --</option>` + homeworksData.map(h => `<option value="${h.id}">${h.title} [${formatTargetDisplay(h.target)}]</option>`).join('');
             document.getElementById('filter-hw-select').innerHTML = hwsHtml;
             document.getElementById('asmt-linked-hw').innerHTML = `<option value="">-- 不連結 --</option>` + homeworksData.map(h => `<option value="${h.id}">${h.title}</option>`).join('');
         }
 
+        // 🎯 全面升級的動態目標過濾器 (支援 Form+Group 及 Class)
         function updateDynamicFilters() {
-            const uniqueClasses = [...new Set(studentsData.map(s => s.classGroup).filter(c => c && c.trim() !== ''))].sort();
-            const classHtml = `<option value="ALL">全部班別</option>` + uniqueClasses.map(c => `<option value="${c}">${c}</option>`).join('');
-            document.querySelectorAll('.dynamic-class-dropdown').forEach(d => { const v = d.value; d.innerHTML = classHtml; if(v !== 'ALL' && uniqueClasses.includes(v)) d.value = v; });
-            window.dynamicClassOptions = uniqueClasses; 
+            const forms = [...new Set(studentsData.map(s => getForm(s.classGroup)).filter(f => f !== ''))].sort();
+            const classes = [...new Set(studentsData.map(s => s.classGroup).filter(c => c && c.trim() !== ''))].sort();
+            
+            // 建立精準的 target 列表
+            let targetOptions = `<option value="ALL">全校/全級 (ALL)</option>`;
+            forms.forEach(f => {
+                targetOptions += `<option value="FORM_${f}">只限 S${f} 全級</option>`;
+                const groupsInForm = [...new Set(studentsData.filter(s => getForm(s.classGroup) === f && s.subjectGroup).map(s => s.subjectGroup))].sort();
+                groupsInForm.forEach(g => {
+                    targetOptions += `<option value="GROUP_${f}_${g}">只限 S${f} ${g}</option>`;
+                });
+            });
+            classes.forEach(c => {
+                targetOptions += `<option value="CLASS_${c}">只限 ${c} 班</option>`;
+            });
 
-            const uniqueForms = [...new Set(studentsData.map(s => getForm(s.classGroup)).filter(f => f !== ''))].sort();
-            const formHtml = `<option value="ALL">所有級別</option>` + uniqueForms.map(f => `<option value="${f}">S${f}</option>`).join('');
-            document.querySelectorAll('.dynamic-form-dropdown').forEach(d => { const v = d.value; d.innerHTML = formHtml; if(v !== 'ALL' && uniqueForms.includes(v)) d.value = v; });
-
+            document.querySelectorAll('.dynamic-target-dropdown').forEach(d => {
+                const val = d.value; d.innerHTML = targetOptions; if(val && val !== 'ALL') d.value = val;
+            });
+            window.dynamicClassOptions = classes; // For roster assignment
+            
             const resetSel = document.getElementById('reset-scope');
-            resetSel.innerHTML = `<option value="ALL">🚨 清空全校所有資料 (完全重置)</option>` + uniqueForms.map(f => `<option value="${f}">🗑️ 僅刪除【S${f}】的學生與成績</option>`).join('');
+            resetSel.innerHTML = `<option value="ALL">🚨 清空全校所有資料 (完全重置)</option>` + forms.map(f => `<option value="${f}">🗑️ 僅刪除【S${f}】的學生與成績</option>`).join('');
+        }
 
-            const uniqueGroups = [...new Set(studentsData.map(s => s.subjectGroup).filter(g => g && g.trim() !== ''))].sort();
-            const groupHtml = `<option value="ALL">所有組別</option>` + uniqueGroups.map(g => `<option value="${g}">${g}</option>`).join('');
-            document.querySelectorAll('.dynamic-group-dropdown').forEach(d => { const v = d.value; d.innerHTML = groupHtml; if(v !== 'ALL' && uniqueGroups.includes(v)) d.value = v; });
-
-            const targetHtml = `<option value="ALL">全校/全級</option>` + 
-                uniqueForms.map(f => `<option value="${f}">只限 S${f} 全級</option>`).join('') +
-                uniqueGroups.map(g => `<option value="${g}">只限 ${g} 組別</option>`).join('') +
-                uniqueClasses.map(c => `<option value="${c}">只限 ${c} 班</option>`).join('');
-            document.querySelectorAll('.dynamic-target-dropdown').forEach(d => { const v = d.value; d.innerHTML = targetHtml; if(v !== 'ALL') d.value = v; });
+        function filterAndSortStudents(viewPrefix) {
+            const sq = document.getElementById('global-search').value.toLowerCase(), tgtFilter = document.getElementById(`${viewPrefix}-target-filter`)?.value;
+            let fList = studentsData;
+            if(viewPrefix !== 'aligner') fList = fList.filter(s => s.status === 'active');
+            
+            // Use the smart isTargetMatch logic
+            if(tgtFilter && tgtFilter !== 'ALL') {
+                fList = fList.filter(s => isTargetMatch(tgtFilter, s));
+            }
+            
+            if(sq) fList = fList.filter(s => (s.name&&s.name.toLowerCase().includes(sq)) || (s.studentId&&s.studentId.toLowerCase().includes(sq)) || (s.classGroup&&s.classGroup.toLowerCase().includes(sq)) || (s.classNo&&s.classNo.includes(sq)));
+            return fList.sort((a,b) => {
+                if(a.status==='active'&&b.status!=='active') return -1; if(a.status!=='active'&&b.status==='active') return 1;
+                const cC = String(a.classGroup||'').localeCompare(String(b.classGroup||'')); if(cC!==0) return cC;
+                const nA = parseInt(a.classNo, 10), nB = parseInt(b.classNo, 10);
+                if(!isNaN(nA) && !isNaN(nB)) return nA - nB;
+                return String(a.studentId).localeCompare(String(b.studentId));
+            });
         }
 
         function renderAllViews() {
@@ -459,13 +497,22 @@
         }
 
         document.getElementById('global-search').addEventListener('input', renderAllViews);
-        document.querySelectorAll('.dynamic-class-dropdown, .dynamic-group-dropdown, .dynamic-form-dropdown, .weight-input').forEach(el => el.addEventListener('change', renderAllViews));
+        document.querySelectorAll('.dynamic-target-dropdown, .weight-input').forEach(el => el.addEventListener('change', renderAllViews));
         
         // Timetable Logic
         document.getElementById('btn-create-event').addEventListener('click', async () => {
-            const tgtClass = document.getElementById('event-class').value, date = document.getElementById('event-date').value, type = document.getElementById('event-type').value, title = document.getElementById('event-title').value.trim();
+            const tgtClass = document.getElementById('event-class').value;
+            const date = document.getElementById('event-date').value;
+            const type = document.getElementById('event-type').value;
+            const title = document.getElementById('event-title').value.trim();
+            const details = document.getElementById('event-details').value.trim(); // 🆕 Notes Details
+            
             if(!date || !title) return showToast("請選擇日期並填寫標題", "error");
-            try { await setDoc(getDocRef('timetable', `evt_${Date.now()}`), { classGroup: tgtClass, date: date, type: type, title: title, createdAt: new Date().toISOString() }); showToast("排程發佈成功", "success"); logAction(`發佈排程: ${title}`); document.getElementById('event-title').value = ''; } catch(e) { showToast("發佈失敗", "error"); }
+            try { 
+                await setDoc(getDocRef('timetable', `evt_${Date.now()}`), { classGroup: tgtClass, date: date, type: type, title: title, details: details, createdAt: new Date().toISOString() }); 
+                showToast("排程發佈成功", "success"); logAction(`發佈排程: ${title}`); 
+                document.getElementById('event-title').value = ''; document.getElementById('event-details').value = '';
+            } catch(e) { showToast("發佈失敗", "error"); }
         });
 
         function renderTimetable() {
@@ -474,7 +521,10 @@
             if(sorted.length === 0) return list.innerHTML = '<div class="text-center py-8 text-gray-400">目前沒有即將到來的測考或排程。</div>';
             sorted.forEach(evt => {
                 let ic='ph-bell', clr='text-blue-600 bg-blue-100'; if(evt.type==='Quiz'){ic='ph-file-text';clr='text-orange-600 bg-orange-100';}else if(evt.type==='Test'){ic='ph-exam';clr='text-red-600 bg-red-100';}else if(evt.type==='Dictation'){ic='ph-pencil-simple';clr='text-purple-600 bg-purple-100';}
-                list.innerHTML += `<div class="flex items-center justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-center gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr}"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${evt.classGroup==='ALL'?'全級/全校':evt.classGroup}</span></div><h4 class="font-bold text-gray-900 text-lg">${evt.title}</h4></div></div><button class="btn-del-event p-2 text-red-400 hover:text-white hover:bg-red-500 rounded-lg transition-colors" data-id="${evt.id}" title="刪除此排程"><i class="ph ph-trash text-xl"></i></button></div>`;
+                
+                let detailsHtml = evt.details ? `<p class="text-xs text-gray-500 mt-1 whitespace-pre-wrap"><i class="ph ph-info mr-1"></i>${evt.details}</p>` : '';
+                
+                list.innerHTML += `<div class="flex items-start justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-start gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr} shrink-0"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2 mb-1"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${formatTargetDisplay(evt.classGroup)}</span></div><h4 class="font-bold text-gray-900 text-[15px]">${evt.title}</h4>${detailsHtml}</div></div><button class="btn-del-event p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg shrink-0" data-id="${evt.id}" title="刪除此排程"><i class="ph ph-trash text-xl"></i></button></div>`;
             });
             document.querySelectorAll('.btn-del-event').forEach(btn => btn.addEventListener('click', async (e) => { if(confirm("確定刪除此排程？")) { await deleteDoc(getDocRef('timetable', e.currentTarget.getAttribute('data-id'))); showToast("已刪除", "success"); } }));
         }
@@ -513,25 +563,7 @@
                 });
                 if(tWt > 0) { const pct = wSum/tWt; raw = pct*tMax; out = raw.toFixed(1); if(out.endsWith('.0')) out = Math.round(raw); } else if(cbx.length > 0) out = '[-]';
             }
-            // Note: Grade string (A/B/C) is completely removed. Handled via percentiles later.
             return { output: out, val: raw, bk: bk };
-        }
-
-        function filterAndSortStudents(viewPrefix) {
-            const sq = document.getElementById('global-search').value.toLowerCase(), cF = document.getElementById(`${viewPrefix}-class-filter`)?.value, gF = document.getElementById(`${viewPrefix}-group-filter`)?.value, fF = document.getElementById(`${viewPrefix}-form-filter`)?.value;
-            let fList = studentsData;
-            if(viewPrefix !== 'aligner') fList = fList.filter(s => s.status === 'active');
-            if(fF && fF !== 'ALL') fList = fList.filter(s => getForm(s.classGroup) === fF);
-            if(cF && cF !== 'ALL') fList = fList.filter(s => s.classGroup === cF);
-            if(gF && gF !== 'ALL') fList = fList.filter(s => s.subjectGroup === gF);
-            if(sq) fList = fList.filter(s => (s.name&&s.name.toLowerCase().includes(sq)) || (s.studentId&&s.studentId.toLowerCase().includes(sq)) || (s.classGroup&&s.classGroup.toLowerCase().includes(sq)) || (s.classNo&&s.classNo.includes(sq)));
-            return fList.sort((a,b) => {
-                if(a.status==='active'&&b.status!=='active') return -1; if(a.status!=='active'&&b.status==='active') return 1;
-                const cC = String(a.classGroup||'').localeCompare(String(b.classGroup||'')); if(cC!==0) return cC;
-                const nA = parseInt(a.classNo, 10), nB = parseInt(b.classNo, 10);
-                if(!isNaN(nA) && !isNaN(nB)) return nA - nB;
-                return String(a.studentId).localeCompare(String(b.studentId));
-            });
         }
 
         function renderAlignerBoard() {
@@ -539,7 +571,6 @@
             let fList = filterAndSortStudents('aligner');
             let studentResults = [];
             
-            // First Pass: Calculate scores
             fList.forEach(stu => {
                 if(stu.status === 'dropped') {
                     studentResults.push({ stu, res: { output: '', val: null, bk: {} } });
@@ -549,14 +580,12 @@
                 }
             });
 
-            // Extract valid numerical scores and sort descending for percentile ranking
             let validScores = studentResults.filter(item => item.res.val !== null).map(item => item.res.val);
             validScores.sort((a, b) => b - a);
 
-            // Function to assign Level 4 to 1 based on array position
             function getPercentileLevel(score) {
                 if(validScores.length === 0) return '-';
-                const rank = validScores.indexOf(score) + 1; // 1-based rank
+                const rank = validScores.indexOf(score) + 1; 
                 const pct = rank / validScores.length;
                 if(pct <= 0.25) return 'Level 4 (Top 25%)';
                 if(pct <= 0.50) return 'Level 3 (25%-50%)';
@@ -564,17 +593,12 @@
                 return 'Level 1 (Bottom 25%)';
             }
 
-            // Second Pass: Render rows with computed Level
             studentResults.forEach(item => {
-                const { stu, res } = item;
-                const out = res.output;
-                
-                // Assign level
+                const { stu, res } = item; const out = res.output;
                 let gl = '-';
                 if (stu.status === 'dropped') gl = 'N.A.';
                 else if (res.val !== null) gl = getPercentileLevel(res.val);
 
-                // For the UI rendering class mapping
                 let glClass = "text-gray-600";
                 if(gl.includes('Level 4')) glClass = "text-green-600 bg-green-100";
                 else if(gl.includes('Level 3')) glClass = "text-blue-600 bg-blue-100";
@@ -587,7 +611,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Update Stats Box
             if(validScores.length > 0) {
                 const n = validScores.length, mean = validScores.reduce((a,b)=>a+b,0)/n, sd = Math.sqrt(validScores.reduce((a,b)=>a+Math.pow(b-mean,2),0)/n);
                 let pCnt = 0; if(alignerMode==='single'){ const a = assessmentsData.find(a=>a.id===document.querySelector('input[name="aligner-single-sel"]:checked')?.value); pCnt = validScores.filter(x=>x>=(a?a.maxScore/2:50)).length; } else { pCnt = validScores.filter(x=>x>=((Number(document.getElementById('aligner-target-max').value)||100)/2)).length; }
@@ -621,9 +644,7 @@
             html2pdf().set({ margin:0, filename:`${name}_Report.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS: true}, jsPDF:{unit:'mm',format:'a4', orientation: 'portrait'} }).from(el).save().then(() => { btn.innerHTML='<i class="ph ph-file-pdf text-lg"></i> 下載為 PDF'; showToast("報告下載成功", "success"); });
         });
 
-        // ==========================================
         // Backups & Selective Reset
-        // ==========================================
         document.getElementById('btn-backup-db').addEventListener('click', async () => {
             const btn = document.getElementById('btn-backup-db'); btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 打包中...'; btn.disabled = true;
             try {
@@ -636,7 +657,6 @@
         const resetModal = document.getElementById('modal-reset-db'), resetInput = document.getElementById('reset-confirm-text'), btnExecuteReset = document.getElementById('btn-execute-reset');
         document.getElementById('btn-reset-db').addEventListener('click', () => { resetInput.value = ''; btnExecuteReset.disabled = true; resetModal.classList.remove('hidden'); });
         resetInput.addEventListener('input', (e) => { btnExecuteReset.disabled = e.target.value.trim() === 'DELETE' ? false : true; });
-        
         btnExecuteReset.addEventListener('click', async () => {
             if(!currentUser) return; btnExecuteReset.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 刪除中...'; btnExecuteReset.disabled = true;
             const scope = document.getElementById('reset-scope').value;
@@ -661,9 +681,7 @@
             } catch (err) { showToast("刪除失敗", "error"); } finally { btnExecuteReset.innerHTML = '確認刪除'; btnExecuteReset.disabled = false; }
         });
 
-        // ==========================================
         // Roster & Parsers
-        // ==========================================
         document.querySelectorAll('.btn-close-modal').forEach(btn => btn.addEventListener('click', e => e.target.closest('.fixed').classList.add('hidden')));
         const fileInput = document.getElementById('file-input'); fileInput.addEventListener('change', (e) => { if(e.target.files.length>0) handleRosterUpload(e.target.files[0]); });
         
@@ -708,7 +726,7 @@
             document.querySelectorAll('.drop-btn').forEach(btn=>btn.addEventListener('click', async(e)=>{ if(confirm("確定標記退修？")) await setDoc(getDocRef('students', e.target.dataset.id), {status: 'dropped'}, {merge:true}); }));
         }
 
-        // 🆕 Homework Creation with Target
+        // Homework
         document.getElementById('btn-create-hw').addEventListener('click', async () => { 
             const t = document.getElementById('new-hw-title').value, d = document.getElementById('new-hw-due').value, tgt = document.getElementById('new-hw-target').value; 
             if(!t||!d) return showToast("缺資料", "error"); 
@@ -716,7 +734,6 @@
             showToast("發布成功", "success"); document.getElementById('new-hw-title').value = ''; 
         });
         
-        // 🆕 Homework Deletion Event
         document.getElementById('filter-hw-select').addEventListener('change', (e) => {
             const btnDel = document.getElementById('btn-delete-hw');
             if(e.target.value) btnDel.classList.remove('hidden'); else btnDel.classList.add('hidden');
@@ -740,16 +757,16 @@
             let fList = filterAndSortStudents('hw'); tbody.innerHTML = '';
             
             fList.forEach(stu => {
-                if(!isTargetMatch(hwData?.target, stu)) return; // 🆕 Skip non-targeted students
+                if(!isTargetMatch(hwData?.target, stu)) return; 
                 const sub = submissionsData.find(s => s.id === `${hwId}_${stu.studentId}`) || {status:'missing', lateDays:0};
                 const badge = sub.status==='missing' ? `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">未交</span>` : (sub.status==='submitted' ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">已交</span>` : `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">已補交</span>`);
                 tbody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="px-6 py-3 font-mono">S${getForm(stu.classGroup)} / ${stu.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono">${stu.classGroup}/${stu.classNo||'-'}</td><td class="px-6 py-3 font-medium">${stu.name}</td><td class="px-6 py-3">${badge}</td><td class="px-6 py-3 text-right"><select class="hw-override p-1.5 border rounded outline-none text-sm" data-hw="${hwId}" data-stu="${stu.studentId}"><option value="missing" ${sub.status==='missing'?'selected':''}>未交</option><option value="submitted" ${sub.status==='submitted'?'selected':''}>已交</option><option value="late_submitted" ${sub.status==='late_submitted'?'selected':''}>補交</option></select></td></tr>`;
             });
             if(tbody.innerHTML==='') tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">沒有符合發佈對象的學生。</td></tr>`;
-            
             document.querySelectorAll('.hw-override').forEach(sel=>sel.addEventListener('change', async(e)=>{ await setDoc(getDocRef('submissions', `${e.target.dataset.hw}_${e.target.dataset.stu}`), {studentId:e.target.dataset.stu, homeworkId:e.target.dataset.hw, status:e.target.value, lateDays:(e.target.value==='late_submitted'?1:0), updatedAt:new Date().toISOString()}, {merge:true}); }));
         }
 
+        // Dynamic Grading
         document.getElementById('btn-add-assessment').addEventListener('click', () => document.getElementById('modal-assessment').classList.remove('hidden'));
         document.getElementById('btn-save-asmt').addEventListener('click', async () => { 
             const t = document.getElementById('asmt-title').value, m = Number(document.getElementById('asmt-max').value), tgt = document.getElementById('asmt-target').value; 
@@ -759,10 +776,7 @@
         });
         document.getElementById('btn-publish-all').addEventListener('click', () => { assessmentsData.filter(a=>a.status==='draft').forEach(async asm => await setDoc(getDocRef('assessments', asm.id), {status:'published'}, {merge:true})); showToast("發佈完成", "success"); });
         
-        // 🆕 Assessment Deletion Event
-        window.deleteAsm = async (id) => {
-            if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); }
-        }
+        window.deleteAsm = async (id) => { if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); } }
 
         function renderGradingBoard() {
             const thead = document.getElementById('grading-thead'), tbody = document.getElementById('grading-tbody');
@@ -783,22 +797,33 @@
                 const rate = tM>0 ? Math.round((tE/tM)*100) : 0; rHtml += `<td class="bg-gray-50 font-mono font-bold ${rate<50?'text-red-500':'text-green-600'} shadow-sm">${tM>0?rate+'%':'-'}</td>`;
                 const tr = document.createElement('tr'); tr.innerHTML = rHtml; tr.className="hover:bg-orange-50/20"; tbody.appendChild(tr);
             });
-            document.querySelectorAll('.cell-editable').forEach(td => td.addEventListener('dblclick', function(){
+            
+            // 🎯 Excel-like Inline Edit (Click & Enter to next)
+            document.querySelectorAll('.cell-editable').forEach(td => td.addEventListener('click', function(){
                 if(this.classList.contains('cell-editing')) return;
                 const aId = this.dataset.asm, sId = this.dataset.stu, hId = this.dataset.hw, oVal = this.textContent==='-'?'':this.textContent;
                 this.classList.add('cell-editing'); this.innerHTML = `<input type="text" class="cell-input" value="${oVal}">`;
                 const inp = this.querySelector('input'); inp.focus(); inp.select();
-                inp.addEventListener('blur', async () => {
+                
+                const saveFunc = async () => {
                     const v = inp.value.trim().toUpperCase(); this.classList.remove('cell-editing'); this.innerHTML='...';
-                    if(v==='') return this.innerHTML='-';
+                    if(v==='') { this.innerHTML='-'; this.className="cell-editable text-gray-400"; return; }
                     let fSc = v, raw = v, pen = 0;
                     if(v !== 'ABS') {
                         raw = Number(v); fSc = raw;
                         if(hId) { const sub = submissionsData.find(s=>s.id===`${hId}_${sId}`); if(sub && sub.lateDays>0){ pen=sub.lateDays; fSc=Math.max(0, raw-pen); showToast(`安全網扣 ${pen} 分`, "error"); } }
                     }
                     await setDoc(getDocRef('grades', `${aId}_${sId}`), { assessmentId: aId, studentId: sId, score: fSc, rawScore: raw, penalty: pen, updatedAt: new Date().toISOString() }, {merge:true});
+                };
+
+                inp.addEventListener('blur', saveFunc);
+                inp.addEventListener('keydown', (e) => { 
+                    if(e.key === 'Enter' || e.key === 'ArrowDown') { 
+                        e.preventDefault(); inp.blur(); 
+                        const nextRow = this.parentElement.nextElementSibling;
+                        if(nextRow) { const nextTd = nextRow.cells[this.cellIndex]; if(nextTd && nextTd.classList.contains('cell-editable')) setTimeout(() => nextTd.click(), 50); }
+                    }
                 });
-                inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') inp.blur(); });
             }));
         }
 
