@@ -225,7 +225,7 @@
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left">
-                                <thead class="bg-brand-black text-white text-sm"><tr><th class="px-6 py-4">級別</th><th class="px-6 py-4">組別</th><th class="px-6 py-4">班別班號</th><th class="px-6 py-4">永久ID</th><th class="px-6 py-4">姓名</th><th class="px-6 py-4 text-center">科長</th><th class="px-6 py-4">負責點收班別</th><th class="px-6 py-4 text-right">操作</th></tr></thead>
+                                <thead class="bg-brand-black text-white text-sm"><tr><th class="px-6 py-4">級別</th><th class="px-6 py-4">組別</th><th class="px-6 py-4">班別班號</th><th class="px-6 py-4">永久ID</th><th class="px-6 py-4">姓名</th><th class="px-6 py-4 text-center">科長</th><th class="px-6 py-4">負責點收範圍</th><th class="px-6 py-4 text-right">操作</th></tr></thead>
                                 <tbody id="roster-tbody" class="divide-y bg-white"></tbody>
                             </table>
                         </div>
@@ -253,9 +253,12 @@
                             <div class="flex gap-2">
                                 <select id="filter-hw-select" class="w-64 p-2 text-sm border rounded-lg outline-none bg-white"><option value="">-- 請選擇功課 --</option></select>
                                 <button id="btn-delete-hw" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-2 rounded-lg transition-colors hidden" title="刪除此功課"><i class="ph ph-trash text-lg"></i></button>
-                                <!-- HW Table dynamically filters based on HW target, no extra dropdown needed -->
                             </div>
                         </div>
+                        
+                        <!-- 🆕 科長交收狀態看板 -->
+                        <div id="monitor-status-board" class="bg-orange-50 border-b hidden"></div>
+
                         <div class="overflow-x-auto"><table class="w-full text-left">
                             <thead class="bg-brand-black text-white text-sm"><tr><th class="px-6 py-4">級別 / 組別</th><th class="px-6 py-4">班別 / 班號</th><th class="px-6 py-4">姓名</th><th class="px-6 py-4">繳交狀態</th><th class="px-6 py-4 text-right">手動覆寫</th></tr></thead>
                             <tbody id="teacher-hw-tbody" class="divide-y bg-white"></tbody>
@@ -273,7 +276,6 @@
                         
                         <div class="w-px h-8 bg-gray-300 my-auto hidden sm:block"></div>
                         
-                        <!-- 🆕 新增：雙向對接 Excel 按鈕 -->
                         <button id="btn-export-grades" class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="將打分板匯出為 Excel 備份或離線入分"><i class="ph ph-export text-lg"></i>匯出為 Excel</button>
                         <button id="btn-import-grades" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="上載含有評核名稱的 Excel 進行批次入分"><i class="ph ph-import text-lg"></i>Excel 批次入分</button>
                     </div>
@@ -331,7 +333,7 @@
     <!-- Excel Blueprint Import -->
     <div id="modal-blueprint" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-lg"><div class="p-5 border-b flex justify-between items-center bg-blue-50 rounded-t-xl"><h3 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="ph ph-file-xls"></i>大考藍圖匯入</h3><button class="btn-close-modal text-gray-500"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><div class="bg-gray-100 p-3 rounded-lg"><p class="text-gray-700 font-bold mb-1"><i class="ph ph-info"></i> 這是什麼？</p><p class="text-gray-600">系統會讀取您日常改卷的 Excel，根據您設定的「藍圖」，自動把各題分數加總成一個完整的測考成績寫入網格，免去重複打分。</p></div><div><label class="block font-medium mb-1">大考名稱</label><input type="text" id="bp-title" class="w-full p-2 border rounded-lg" placeholder="例：Term 1 Final Exam"></div><div><label class="block font-medium mb-1">藍圖結構 (題號:滿分)</label><input type="text" id="bp-config" class="w-full p-2 border rounded-lg font-mono" placeholder="例：Q1:5, Q2:10, MC:30"><p class="text-[10px] text-gray-500 mt-1">注意：上載的 Excel 第一列必須包含這些標題 (如 Q1, Q2)，且必須有 <span class="font-bold">Class No.</span> 或 <span class="font-bold">Student ID</span> 欄位。</p></div><div class="border-2 border-dashed border-blue-200 rounded-xl p-6 text-center hover:bg-blue-50 cursor-pointer relative transition-colors"><input type="file" id="bp-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".xlsx, .xls"><i class="ph ph-upload-simple text-3xl text-blue-400 mb-2"></i><p class="font-medium text-blue-600">上載 Excel 批改記錄表</p></div></div></div></div>
 
-    <!-- 🆕 Excel 批次入分 (General Import) -->
+    <!-- Excel 批次入分 (General Import) -->
     <div id="modal-import-grades" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-lg">
             <div class="p-5 border-b flex justify-between items-center bg-indigo-50 rounded-t-xl">
@@ -396,7 +398,8 @@
         function formatTargetDisplay(target) {
             if(!target || target === 'ALL') return '全級/全校';
             if(target.startsWith('FORM_')) return `S${target.replace('FORM_','')}`;
-            if(target.startsWith('GROUP_')) { const p = target.split('_'); return `S${p[1]} ${p[2]}`; }
+            if(target.startsWith('GROUP_CLASS_')) { const p = target.split('_'); return `${p[3]} (${p[4]})`; } // 🆕 Added composite
+            if(target.startsWith('GROUP_')) { const p = target.split('_'); return `${p[2]} (全級)`; } // 🆕 Changed
             if(target.startsWith('CLASS_')) return target.replace('CLASS_','');
             return target;
         }
@@ -405,6 +408,10 @@
         function isTargetMatch(target, stu) {
             if(!target || target === 'ALL') return true;
             if(target.startsWith('FORM_')) return getForm(stu.classGroup) === target.replace('FORM_','');
+            if(target.startsWith('GROUP_CLASS_')) {
+                const parts = target.split('_'); // GROUP_CLASS_4_X1_4A
+                return getForm(stu.classGroup) === parts[2] && stu.subjectGroup === parts[3] && stu.classGroup === parts[4];
+            }
             if(target.startsWith('GROUP_')) {
                 const parts = target.split('_'); // GROUP_4_X1
                 return getForm(stu.classGroup) === parts[1] && stu.subjectGroup === parts[2];
@@ -536,7 +543,7 @@
             const date = document.getElementById('event-date').value;
             const type = document.getElementById('event-type').value;
             const title = document.getElementById('event-title').value.trim();
-            const details = document.getElementById('event-details').value.trim(); // 🆕 Notes Details
+            const details = document.getElementById('event-details').value.trim();
             
             if(!date || !title) return showToast("請選擇日期並填寫標題", "error");
             try { 
@@ -555,7 +562,7 @@
                 
                 let detailsHtml = evt.details ? `<p class="text-xs text-gray-500 mt-1 whitespace-pre-wrap"><i class="ph ph-info mr-1"></i>${evt.details}</p>` : '';
                 
-                list.innerHTML += `<div class="flex items-start justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-start gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr} shrink-0"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2 mb-1"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${formatTargetDisplay(evt.classGroup)}</span></div><h4 class="font-bold text-gray-900 text-[15px]">${evt.title}</h4>${detailsHtml}</div></div><button class="btn-del-event p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg shrink-0" data-id="${evt.id}" title="刪除此排程"><i class="ph ph-trash text-xl"></i></button></div>`;
+                list.innerHTML += `<div class="flex items-start justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-start gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr} shrink-0"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2 mb-1"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${formatTargetDisplay(evt.classGroup)}</span></div><h4 class="font-bold text-gray-900 text-[15px]">${evt.title}</h4>${detailsHtml}</div></div><button class="btn-del-event p-2 text-gray-400 hover:text-white hover:bg-red-500 rounded-lg shrink-0 transition-colors" data-id="${evt.id}" title="刪除此排程"><i class="ph ph-trash text-xl"></i></button></div>`;
             });
             document.querySelectorAll('.btn-del-event').forEach(btn => btn.addEventListener('click', async (e) => { if(confirm("確定刪除此排程？")) { await deleteDoc(getDocRef('timetable', e.currentTarget.getAttribute('data-id'))); showToast("已刪除", "success"); } }));
         }
@@ -712,7 +719,7 @@
             } catch (err) { showToast("刪除失敗", "error"); } finally { btnExecuteReset.innerHTML = '確認刪除'; btnExecuteReset.disabled = false; }
         });
 
-        // Roster & Parsers
+        // 🎯 Roster & Parsers (Smart Matrix Update)
         document.querySelectorAll('.btn-close-modal').forEach(btn => btn.addEventListener('click', e => e.target.closest('.fixed').classList.add('hidden')));
         const fileInput = document.getElementById('file-input'); fileInput.addEventListener('change', (e) => { if(e.target.files.length>0) handleRosterUpload(e.target.files[0]); });
         
@@ -747,9 +754,32 @@
             const tbody = document.getElementById('roster-tbody'); let fList = filterAndSortStudents('roster');
             document.getElementById('student-count').textContent = `${fList.length} 人`; tbody.innerHTML = '';
             const opts = window.dynamicClassOptions || [];
+            
             fList.forEach(s => {
                 const isD = s.status === 'dropped'; const tr = document.createElement('tr'); tr.className = isD ? "bg-red-50 opacity-60" : "border-b hover:bg-gray-50";
-                tr.innerHTML = `<td class="px-6 py-3 font-mono">S${getForm(s.classGroup)}</td><td class="px-6 py-3 font-mono">${s.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono font-bold">${s.classGroup||'-'} / ${s.classNo||'-'}</td><td class="px-6 py-3 font-mono text-gray-400 text-xs">${s.studentId}</td><td class="px-6 py-3 font-medium">${s.name||'-'} ${isD?'<span class="text-[10px] bg-red-200 text-red-800 px-1 rounded ml-1">Dropped</span>':''}</td><td class="px-6 py-3 text-center"><input type="checkbox" class="monitor-cb text-brand-orange" data-id="${s.id}" ${s.isMonitor?'checked':''} ${isD?'disabled':''}></td><td class="px-6 py-3"><select class="tgt-sel text-sm border p-1 rounded outline-none" data-id="${s.id}" ${isD?'disabled':''}>${`<option value="" ${s.targetClass===''?'selected':''}>無</option>` + opts.map(o=>`<option value="${o}" ${s.targetClass===o?'selected':''}>${o}</option>`).join('')}</select></td><td class="px-6 py-3 text-right">${!isD ? `<button class="text-red-500 font-bold drop-btn" data-id="${s.id}">Drop</button>` : `<span class="text-xs text-gray-400">已退修</span>`}</td>`;
+                
+                // 🎯 智慧型聯動點收矩陣下拉選單
+                let tgtSelectHtml = `<select class="tgt-sel text-xs border p-1.5 rounded outline-none max-w-[160px] truncate" data-id="${s.id}" ${isD?'disabled':''}>`;
+                tgtSelectHtml += `<option value="" ${s.targetClass===''?'selected':''}>無</option>`;
+                
+                const f = getForm(s.classGroup);
+                if (s.subjectGroup) {
+                    // 如果是高中選修生，自動生成複合式選項
+                    const gAll = `GROUP_${f}_${s.subjectGroup}`;
+                    const gClass = `GROUP_CLASS_${f}_${s.subjectGroup}_${s.classGroup}`;
+                    tgtSelectHtml += `<option value="${gAll}" ${s.targetClass===gAll?'selected':''}>${s.subjectGroup} - 全級點收</option>`;
+                    tgtSelectHtml += `<option value="${gClass}" ${s.targetClass===gClass?'selected':''}>${s.subjectGroup} - ${s.classGroup} 專屬點收</option>`;
+                } else {
+                    // 如果是初中生 (沒有 X1/X2)，則顯示常規班別
+                    opts.forEach(o => {
+                        const val = `CLASS_${o}`;
+                        const isSel = (s.targetClass === val || s.targetClass === o) ? 'selected' : '';
+                        tgtSelectHtml += `<option value="${val}" ${isSel}>${o}</option>`;
+                    });
+                }
+                tgtSelectHtml += `</select>`;
+
+                tr.innerHTML = `<td class="px-6 py-3 font-mono">S${f}</td><td class="px-6 py-3 font-mono">${s.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono font-bold">${s.classGroup||'-'} / ${s.classNo||'-'}</td><td class="px-6 py-3 font-mono text-gray-400 text-xs">${s.studentId}</td><td class="px-6 py-3 font-medium">${s.name||'-'} ${isD?'<span class="text-[10px] bg-red-200 text-red-800 px-1 rounded ml-1">Dropped</span>':''}</td><td class="px-6 py-3 text-center"><input type="checkbox" class="monitor-cb text-brand-orange w-4 h-4 rounded cursor-pointer" data-id="${s.id}" ${s.isMonitor?'checked':''} ${isD?'disabled':''}></td><td class="px-6 py-3">${tgtSelectHtml}</td><td class="px-6 py-3 text-right">${!isD ? `<button class="text-red-500 font-bold drop-btn hover:underline" data-id="${s.id}">Drop</button>` : `<span class="text-xs text-gray-400">已退修</span>`}</td>`;
                 tbody.appendChild(tr);
             });
             document.querySelectorAll('.monitor-cb').forEach(cb=>cb.addEventListener('change', async(e)=>await setDoc(getDocRef('students', e.target.dataset.id), {isMonitor: e.target.checked}, {merge:true})));
@@ -757,7 +787,7 @@
             document.querySelectorAll('.drop-btn').forEach(btn=>btn.addEventListener('click', async(e)=>{ if(confirm("確定標記退修？")) await setDoc(getDocRef('students', e.target.dataset.id), {status: 'dropped'}, {merge:true}); }));
         }
 
-        // Homework
+        // 🎯 Homework & Monitor Status Board Update
         document.getElementById('btn-create-hw').addEventListener('click', async () => { 
             const t = document.getElementById('new-hw-title').value, d = document.getElementById('new-hw-due').value, tgt = document.getElementById('new-hw-target').value; 
             if(!t||!d) return showToast("缺資料", "error"); 
@@ -783,17 +813,65 @@
 
         function renderTeacherHwTable() {
             const tbody = document.getElementById('teacher-hw-tbody'), hwId = document.getElementById('filter-hw-select').value;
-            if(!hwId) return tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">請選功課。</td></tr>`;
+            const monitorBoard = document.getElementById('monitor-status-board');
+            if(!hwId) { 
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">請選功課。</td></tr>`; 
+                monitorBoard.classList.add('hidden');
+                return; 
+            }
             const hwData = homeworksData.find(h => h.id === hwId);
             let fList = filterAndSortStudents('hw'); tbody.innerHTML = '';
             
+            // 🎯 找出這份功課涉及的所有活躍學生
+            let hwStudents = studentsData.filter(s => s.status === 'active' && isTargetMatch(hwData?.target, s));
+            
+            // 🎯 找出有權限管這些學生的「有效科長」
+            let relevantMonitors = studentsData.filter(s => s.isMonitor && s.targetClass && s.status === 'active' && hwStudents.some(hs => isTargetMatch(s.targetClass, hs)));
+            
+            if (relevantMonitors.length > 0) {
+                monitorBoard.classList.remove('hidden');
+                let bHtml = `<div class="px-6 py-3 flex items-center gap-2 text-orange-800 font-bold border-b border-orange-200/50"><i class="ph ph-shield-check text-xl"></i> 科長交收狀態看板</div><table class="w-full text-left text-sm"><thead class="text-orange-900/60 bg-orange-100/30"><tr><th class="px-6 py-2">負責範圍</th><th class="px-6 py-2">負責科長</th><th class="px-6 py-2">交收狀態</th><th class="px-6 py-2 text-right">老師安全控制鎖</th></tr></thead><tbody class="divide-y divide-orange-100">`;
+                
+                relevantMonitors.forEach(mon => {
+                    const lData = (hwData.locks && hwData.locks[mon.studentId]) || { status: 'draft' };
+                    let sHtml, aHtml;
+                    if(lData.status === 'locked') {
+                        sHtml = `<span class="text-green-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-green-500 shadow-sm"></div> 🟢 已確認提交 (${lData.date || ''})</span>`;
+                        aHtml = `<button class="btn-unlock-monitor text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}"><i class="ph ph-lock-key-open text-lg"></i> 重新開啟科長修改權限</button>`;
+                    } else {
+                        sHtml = `<span class="text-yellow-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-yellow-400 shadow-sm animate-pulse"></div> 🟡 點收中 (草稿)</span>`;
+                        aHtml = `<button class="btn-lock-monitor text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}"><i class="ph ph-lock-key text-lg"></i> 強制鎖定不准再改</button>`;
+                    }
+                    bHtml += `<tr class="hover:bg-orange-100/30 transition-colors"><td class="px-6 py-2.5 font-mono text-orange-800/80">${formatTargetDisplay(mon.targetClass)}</td><td class="px-6 py-2.5 font-bold text-gray-800">${mon.name}</td><td class="px-6 py-2.5">${sHtml}</td><td class="px-6 py-2.5">${aHtml}</td></tr>`;
+                });
+                bHtml += `</tbody></table>`;
+                monitorBoard.innerHTML = bHtml;
+                
+                monitorBoard.querySelectorAll('.btn-unlock-monitor').forEach(b => b.addEventListener('click', async (e) => {
+                    const h = e.currentTarget.dataset.hw, m = e.currentTarget.dataset.mon;
+                    await setDoc(getDocRef('homeworks', h), { locks: { [m]: { status: 'draft' } } }, {merge:true});
+                    showToast("🔓 已解除鎖定，科長可重新點收", "success");
+                }));
+                monitorBoard.querySelectorAll('.btn-lock-monitor').forEach(b => b.addEventListener('click', async (e) => {
+                    const h = e.currentTarget.dataset.hw, m = e.currentTarget.dataset.mon;
+                    const date = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit'}); 
+                    await setDoc(getDocRef('homeworks', h), { locks: { [m]: { status: 'locked', date } } }, {merge:true});
+                    showToast("🔒 已強制鎖定該科長權限", "success");
+                }));
+            } else {
+                monitorBoard.classList.add('hidden');
+                monitorBoard.innerHTML = '';
+            }
+
+            let hasRows = false;
             fList.forEach(stu => {
                 if(!isTargetMatch(hwData?.target, stu)) return; 
+                hasRows = true;
                 const sub = submissionsData.find(s => s.id === `${hwId}_${stu.studentId}`) || {status:'missing', lateDays:0};
                 const badge = sub.status==='missing' ? `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">未交</span>` : (sub.status==='submitted' ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">已交</span>` : `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">已補交</span>`);
                 tbody.innerHTML += `<tr class="border-b hover:bg-gray-50"><td class="px-6 py-3 font-mono">S${getForm(stu.classGroup)} / ${stu.subjectGroup||'-'}</td><td class="px-6 py-3 font-mono">${stu.classGroup}/${stu.classNo||'-'}</td><td class="px-6 py-3 font-medium">${stu.name}</td><td class="px-6 py-3">${badge}</td><td class="px-6 py-3 text-right"><select class="hw-override p-1.5 border rounded outline-none text-sm" data-hw="${hwId}" data-stu="${stu.studentId}"><option value="missing" ${sub.status==='missing'?'selected':''}>未交</option><option value="submitted" ${sub.status==='submitted'?'selected':''}>已交</option><option value="late_submitted" ${sub.status==='late_submitted'?'selected':''}>補交</option></select></td></tr>`;
             });
-            if(tbody.innerHTML==='') tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">沒有符合發佈對象的學生。</td></tr>`;
+            if(!hasRows) tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">沒有符合發佈對象的學生。</td></tr>`;
             document.querySelectorAll('.hw-override').forEach(sel=>sel.addEventListener('change', async(e)=>{ await setDoc(getDocRef('submissions', `${e.target.dataset.hw}_${e.target.dataset.stu}`), {studentId:e.target.dataset.stu, homeworkId:e.target.dataset.hw, status:e.target.value, lateDays:(e.target.value==='late_submitted'?1:0), updatedAt:new Date().toISOString()}, {merge:true}); }));
         }
 
@@ -809,7 +887,6 @@
         
         window.deleteAsm = async (id) => { if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); } }
 
-        // 🆕 Dynamic Grading: Export & Import Logic
         document.getElementById('btn-export-grades').addEventListener('click', () => {
             let fList = filterAndSortStudents('grading');
             if(fList.length === 0) return showToast("沒有學生資料可匯出", "error");
@@ -921,7 +998,6 @@
                 const tr = document.createElement('tr'); tr.innerHTML = rHtml; tr.className="hover:bg-orange-50/20"; tbody.appendChild(tr);
             });
             
-            // 🎯 Excel-like Inline Edit (單擊全選 & Enter/方向鍵切換)
             document.querySelectorAll('.cell-editable').forEach(td => td.addEventListener('click', function(){
                 if(this.classList.contains('cell-editing')) return;
                 const aId = this.dataset.asm, sId = this.dataset.stu, hId = this.dataset.hw, oVal = this.textContent==='-'?'':this.textContent;
@@ -938,7 +1014,6 @@
                     this.innerHTML = '<i class="ph ph-spinner animate-spin"></i>';
 
                     if(v==='') { 
-                        // 🚀 修正：清空時從資料庫刪除紀錄，讓得分率即時重新計算
                         try { await deleteDoc(getDocRef('grades', `${aId}_${sId}`)); } catch(e) {}
                         return; 
                     }
@@ -955,7 +1030,6 @@
                 inp.addEventListener('keydown', (e) => { 
                     if(e.key === 'Enter' || e.key === 'ArrowDown') { 
                         e.preventDefault(); 
-                        // 🚀 記憶下一個學生的位置
                         const nextTr = this.parentElement.nextElementSibling;
                         if(nextTr) {
                             const nextTd = nextTr.querySelector(`td[data-asm="${aId}"]`);
@@ -967,7 +1041,6 @@
                         saveFunc(); 
                     } else if(e.key === 'ArrowUp') {
                         e.preventDefault();
-                        // 🚀 記憶上一個學生的位置
                         const prevTr = this.parentElement.previousElementSibling;
                         if(prevTr) {
                             const prevTd = prevTr.querySelector(`td[data-asm="${aId}"]`);
@@ -981,7 +1054,6 @@
                 });
             }));
 
-            // 🚀 當 Firebase 瞬間把表格重建完畢後，自動幫您點開記憶的格子
             if (window.pendingFocusStuId && window.pendingFocusAsmId) {
                 setTimeout(() => {
                     const targetTd = document.querySelector(`td.cell-editable[data-asm="${window.pendingFocusAsmId}"][data-stu="${window.pendingFocusStuId}"]`);
