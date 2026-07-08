@@ -366,7 +366,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, addDoc, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig = { 
             apiKey: "AIzaSyDW2AyTePCTS47IDK2XegUSBcAf8cjAfGY", 
@@ -386,8 +386,8 @@
         const db = getFirestore(app);
 
         let currentUser = null;
-        let studentsData=[], homeworksData=[], submissionsData=[], assessmentsData=[], gradesData=[], timetableData=[];
-        let unsubStudents, unsubHomeworks, unsubSubmissions, unsubAssessments, unsubGrades, unsubTimetable;
+        let studentsData=[], homeworksData=[], submissionsData=[], assessmentsData=[], gradesData=[], timetableData=[], lockControlsData=[];
+        let unsubStudents, unsubHomeworks, unsubSubmissions, unsubAssessments, unsubGrades, unsubTimetable, unsubLockControls;
         let radarChartInstance = null;
         let alignerMode = 'single'; 
 
@@ -444,6 +444,7 @@
                 if(unsubStudents) unsubStudents(); if(unsubHomeworks) unsubHomeworks();
                 if(unsubSubmissions) unsubSubmissions(); if(unsubAssessments) unsubAssessments();
                 if(unsubGrades) unsubGrades(); if(unsubTimetable) unsubTimetable();
+                if(unsubLockControls) unsubLockControls();
             } 
         });
 
@@ -473,6 +474,7 @@
             unsubAssessments = onSnapshot(getColRef('assessments'), s => { assessmentsData = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)); renderAlignerConfig(); renderAllViews(); }, errHandler);
             unsubGrades = onSnapshot(getColRef('grades'), s => { gradesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderAllViews(); }, errHandler);
             unsubTimetable = onSnapshot(getColRef('timetable'), s => { timetableData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTimetable(); }, errHandler);
+            unsubLockControls = onSnapshot(getColRef('lockControls'), s => { lockControlsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderAllViews(); }, errHandler);
         }
         
         async function logAction(action) { if (!currentUser) return; try { await addDoc(getColRef('logs'), { timestamp: new Date().toISOString(), operator: currentUser.email, action }); } catch(e){} }
@@ -833,14 +835,18 @@
                 let bHtml = `<div class="px-6 py-3 flex items-center gap-2 text-orange-800 font-bold border-b border-orange-200/50"><i class="ph ph-shield-check text-xl"></i> 科長交收狀態看板</div><table class="w-full text-left text-sm"><thead class="text-orange-900/60 bg-orange-100/30"><tr><th class="px-6 py-2">負責範圍</th><th class="px-6 py-2">負責科長</th><th class="px-6 py-2">交收狀態</th><th class="px-6 py-2 text-right">老師安全控制鎖</th></tr></thead><tbody class="divide-y divide-orange-100">`;
                 
                 relevantMonitors.forEach(mon => {
-                    const lData = (hwData.locks && hwData.locks[mon.studentId]) || { status: 'draft' };
+                    // 🔄 改讀 lockControls collection（key = 功課id_負責範圍），與學生端科長寫入同一格
+                    const lockDoc = lockControlsData.find(l => l.id === `${hwId}_${mon.targetClass}`);
+                    const lData = lockDoc
+                        ? { status: lockDoc.status, date: lockDoc.date || (lockDoc.lockedAt ? new Date(lockDoc.lockedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'}) : '') }
+                        : { status: 'draft' };
                     let sHtml, aHtml;
                     if(lData.status === 'locked') {
                         sHtml = `<span class="text-green-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-green-500 shadow-sm"></div> 🟢 已確認提交 (${lData.date || ''})</span>`;
-                        aHtml = `<button class="btn-unlock-monitor text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}"><i class="ph ph-lock-key-open text-lg"></i> 重新開啟科長修改權限</button>`;
+                        aHtml = `<button class="btn-unlock-monitor text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}" data-target="${mon.targetClass}"><i class="ph ph-lock-key-open text-lg"></i> 重新開啟科長修改權限</button>`;
                     } else {
                         sHtml = `<span class="text-yellow-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-yellow-400 shadow-sm animate-pulse"></div> 🟡 點收中 (草稿)</span>`;
-                        aHtml = `<button class="btn-lock-monitor text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}"><i class="ph ph-lock-key text-lg"></i> 強制鎖定不准再改</button>`;
+                        aHtml = `<button class="btn-lock-monitor text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}" data-target="${mon.targetClass}"><i class="ph ph-lock-key text-lg"></i> 強制鎖定不准再改</button>`;
                     }
                     bHtml += `<tr class="hover:bg-orange-100/30 transition-colors"><td class="px-6 py-2.5 font-mono text-orange-800/80">${formatTargetDisplay(mon.targetClass)}</td><td class="px-6 py-2.5 font-bold text-gray-800">${mon.name}</td><td class="px-6 py-2.5">${sHtml}</td><td class="px-6 py-2.5">${aHtml}</td></tr>`;
                 });
@@ -848,14 +854,16 @@
                 monitorBoard.innerHTML = bHtml;
                 
                 monitorBoard.querySelectorAll('.btn-unlock-monitor').forEach(b => b.addEventListener('click', async (e) => {
-                    const h = e.currentTarget.dataset.hw, m = e.currentTarget.dataset.mon;
-                    await setDoc(getDocRef('homeworks', h), { locks: { [m]: { status: 'draft' } } }, {merge:true});
+                    const h = e.currentTarget.dataset.hw, tgt = e.currentTarget.dataset.target;
+                    // 🔄 改寫 lockControls collection（status 非 'locked' 即代表解鎖，學生端即時可再點收）
+                    await setDoc(getDocRef('lockControls', `${h}_${tgt}`), { id: `${h}_${tgt}`, homeworkId: h, targetGroup: tgt, status: 'draft', lockedBy: currentUser.email, updatedAt: new Date().toISOString() }, {merge:true});
                     showToast("🔓 已解除鎖定，科長可重新點收", "success");
                 }));
                 monitorBoard.querySelectorAll('.btn-lock-monitor').forEach(b => b.addEventListener('click', async (e) => {
-                    const h = e.currentTarget.dataset.hw, m = e.currentTarget.dataset.mon;
+                    const h = e.currentTarget.dataset.hw, tgt = e.currentTarget.dataset.target;
                     const date = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit'}); 
-                    await setDoc(getDocRef('homeworks', h), { locks: { [m]: { status: 'locked', date } } }, {merge:true});
+                    // 🔄 改寫 lockControls collection（與學生端科長「確認收齊並鎖定」同一格）
+                    await setDoc(getDocRef('lockControls', `${h}_${tgt}`), { id: `${h}_${tgt}`, homeworkId: h, targetGroup: tgt, status: 'locked', date, lockedBy: currentUser.email, lockedAt: new Date().toISOString() }, {merge:true});
                     showToast("🔒 已強制鎖定該科長權限", "success");
                 }));
             } else {
@@ -883,7 +891,39 @@
             await setDoc(getDocRef('assessments', `asm_${Date.now()}`), { title: t, maxScore: m, tag: document.getElementById('asmt-tag').value, target: tgt, linkedHwId: document.getElementById('asmt-linked-hw').value, status: 'draft', createdAt: new Date().toISOString() }); 
             document.getElementById('modal-assessment').classList.add('hidden'); showToast("建立草稿", "success"); 
         });
-        document.getElementById('btn-publish-all').addEventListener('click', () => { assessmentsData.filter(a=>a.status==='draft').forEach(async asm => await setDoc(getDocRef('assessments', asm.id), {status:'published'}, {merge:true})); showToast("發佈完成", "success"); });
+        // 🔒 路 B 核心：為單一評核計算每位學生嘅 Level 同 cohortMax（同儕最高分），
+        //    寫入佢自己嗰筆 grade。咁學生端就只需讀自己嗰筆，唔使（亦讀唔到）其他人成績。
+        //    百分位分級邏輯同 Aligner 嘅 getPercentileLevel 完全一致。
+        async function recomputeAssessmentLevels(asmId) {
+            let snap;
+            try { snap = await getDocs(query(getColRef('grades'), where('assessmentId', '==', asmId))); }
+            catch(e) { return; }  // 讀取失敗就唔更新，避免寫入錯資料
+            const entries = snap.docs
+                .map(d => ({ docId: d.id, ...d.data() }))
+                .filter(g => g.score !== 'ABS' && g.score !== '-' && g.score !== '' && g.score !== undefined && g.score !== null && !isNaN(Number(g.score)))
+                .map(g => ({ docId: g.docId, num: Number(g.score) }));
+            if(entries.length === 0) return;
+            const scores = entries.map(e => e.num).sort((a,b)=>b-a);
+            const cohortMax = scores[0], n = scores.length;
+            const promises = entries.map(e => {
+                const rank = scores.indexOf(e.num) + 1, pct = rank / n;
+                let level = 'Level 1 (Bottom 25%)';
+                if(pct <= 0.25) level = 'Level 4 (Top 25%)';
+                else if(pct <= 0.50) level = 'Level 3 (25%-50%)';
+                else if(pct <= 0.75) level = 'Level 2 (50%-75%)';
+                return setDoc(getDocRef('grades', e.docId), { level, cohortMax }, {merge:true});
+            });
+            await Promise.all(promises);
+        }
+
+        document.getElementById('btn-publish-all').addEventListener('click', async () => {
+            const drafts = assessmentsData.filter(a=>a.status==='draft');
+            for(const asm of drafts) { await setDoc(getDocRef('assessments', asm.id), {status:'published'}, {merge:true}); }
+            // 發佈後即為所有已發佈評核（含啱啱發佈嗰啲）重新計算並寫入學生等級 / 同儕最高分
+            const publishedIds = new Set([...drafts.map(d=>d.id), ...assessmentsData.filter(a=>a.status==='published').map(a=>a.id)]);
+            for(const id of publishedIds) { await recomputeAssessmentLevels(id); }
+            showToast("發佈完成，已更新學生等級", "success");
+        });
         
         window.deleteAsm = async (id) => { if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); } }
 
@@ -934,6 +974,7 @@
 
                     let updateCount = 0;
                     let promises = [];
+                    let touchedAsm = new Set();
 
                     for (const row of json) {
                         let rawId = String(row['學號 (Student ID)'] || row['學號'] || row['Student ID'] || row['班號'] || row['Class No.'] || '');
@@ -958,6 +999,7 @@
                                     promises.push(setDoc(getDocRef('grades', `${asm.id}_${finalId}`), {
                                         assessmentId: asm.id, studentId: finalId, score: fSc, rawScore: raw, penalty: 0, updatedAt: new Date().toISOString()
                                     }, {merge: true}));
+                                    touchedAsm.add(asm.id);
                                     updateCount++;
                                 }
                             }
@@ -966,6 +1008,8 @@
                     
                     showToast("正在寫入資料庫...", "info");
                     await Promise.all(promises);
+                    // 🔒 路 B：為已發佈嘅評核更新學生等級（草稿階段唔會觸發）
+                    for(const aid of touchedAsm) { const a = assessmentsData.find(x=>x.id===aid); if(a && a.status==='published') await recomputeAssessmentLevels(aid); }
                     
                     showToast(`✅ 成功匯入 ${updateCount} 筆成績！`, "success");
                     document.getElementById('modal-import-grades').classList.add('hidden');
@@ -1015,6 +1059,8 @@
 
                     if(v==='') { 
                         try { await deleteDoc(getDocRef('grades', `${aId}_${sId}`)); } catch(e) {}
+                        const asmDel = assessmentsData.find(a => a.id === aId);
+                        if(asmDel && asmDel.status === 'published') await recomputeAssessmentLevels(aId);
                         return; 
                     }
                     
@@ -1024,6 +1070,9 @@
                         if(hId) { const sub = submissionsData.find(s=>s.id===`${hId}_${sId}`); if(sub && sub.lateDays>0){ pen=sub.lateDays; fSc=Math.max(0, raw-pen); showToast(`安全網扣 ${pen} 分`, "error"); } }
                     }
                     await setDoc(getDocRef('grades', `${aId}_${sId}`), { assessmentId: aId, studentId: sId, score: fSc, rawScore: raw, penalty: pen, updatedAt: new Date().toISOString() }, {merge:true});
+                    // 🔒 路 B：若此評核已發佈，改分後即時更新全組學生等級（草稿階段唔會觸發，避免入分時窒）
+                    const asmObj = assessmentsData.find(a => a.id === aId);
+                    if(asmObj && asmObj.status === 'published') await recomputeAssessmentLevels(aId);
                 };
 
                 inp.addEventListener('blur', saveFunc);
