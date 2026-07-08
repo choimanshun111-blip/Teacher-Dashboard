@@ -106,13 +106,13 @@
                     <!-- Global Search -->
                     <div class="relative ml-4">
                         <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-                        <input type="text" id="global-search" placeholder="全局搜尋：學生姓名、學號或班級..." class="w-80 pl-10 pr-4 py-2 bg-gray-100 border-transparent focus:bg-white focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 rounded-full text-sm outline-none transition-all">
+                        <input type="text" id="global-search" placeholder="全局搜尋：學生姓名、學號或班級..." class="w-52 lg:w-72 xl:w-80 pl-10 pr-4 py-2 bg-gray-100 border-transparent focus:bg-white focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 rounded-full text-sm outline-none transition-all">
                     </div>
                 </div>
                 <!-- Tools -->
                 <div class="flex items-center gap-3">
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 flex items-center gap-3">
-                        <img id="user-avatar" src="https://via.placeholder.com/32" class="w-7 h-7 rounded-full bg-gray-200">
+                        <img id="user-avatar" src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23e5e7eb'/%3E%3Ccircle%20cx='16'%20cy='12.5'%20r='5.5'%20fill='%239ca3af'/%3E%3Cpath%20d='M5.5%2029c0-6%205-10%2010.5-10s10.5%204%2010.5%2010z'%20fill='%239ca3af'/%3E%3C/svg%3E" class="w-7 h-7 rounded-full bg-gray-200 object-cover">
                         <div class="flex flex-col text-left">
                             <span id="user-name" class="text-xs font-bold text-gray-800 leading-none">載入中...</span>
                             <span id="user-email" class="text-[10px] text-gray-500 leading-none mt-0.5">...</span>
@@ -272,12 +272,12 @@
                 <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border flex-wrap gap-4">
                     <div class="flex flex-wrap gap-3">
                         <button id="btn-add-assessment" class="bg-brand-orange hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2"><i class="ph ph-plus-circle text-lg"></i>新增評核</button>
-                        <button id="btn-import-exam" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="根據大考藍圖自動加總各題分數"><i class="ph ph-file-xls text-lg"></i>大考藍圖匯入</button>
+                        <button id="btn-import-exam" class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip transition-colors" title="根據大考藍圖自動加總各題分數"><i class="ph ph-file-xls text-lg"></i>大考藍圖匯入</button>
                         
                         <div class="w-px h-8 bg-gray-300 my-auto hidden sm:block"></div>
                         
-                        <button id="btn-export-grades" class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="將打分板匯出為 Excel 備份或離線入分"><i class="ph ph-export text-lg"></i>匯出為 Excel</button>
-                        <button id="btn-import-grades" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip" title="上載含有評核名稱的 Excel 進行批次入分"><i class="ph ph-import text-lg"></i>Excel 批次入分</button>
+                        <button id="btn-export-grades" class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip transition-colors" title="將打分板匯出為 Excel 備份或離線入分"><i class="ph ph-export text-lg"></i>匯出為 Excel</button>
+                        <button id="btn-import-grades" class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 font-medium px-4 py-2 rounded-lg flex items-center gap-2 tooltip transition-colors" title="上載含有評核名稱的 Excel 進行批次入分"><i class="ph ph-import text-lg"></i>Excel 批次入分</button>
                     </div>
                     <button id="btn-publish-all" class="bg-brand-black hover:bg-gray-800 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 tooltip"><i class="ph ph-rocket-launch text-lg"></i>一鍵發佈所有草稿</button>
                 </div>
@@ -308,7 +308,7 @@
                         <div class="space-y-4">
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">發佈對象 (班別/組別)</label><select id="event-class" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange dynamic-target-dropdown text-sm"><option value="ALL">全部班別</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">日期</label><input type="date" id="event-date" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"></div>
-                            <div><label class="block text-sm font-medium text-gray-700 mb-1">類型</label><select id="event-type" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"><option value="Quiz">📝 小測 Quiz</option><option value="Test">📄 大考 Test</option><option value="Dictation">✍️ 默書 Dictation</option><option value="Reminder">🔔 一般提醒</option></select></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1">類型</label><select id="event-type" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm"><option value="Quiz">小測 Quiz</option><option value="Test">大考 Test</option><option value="Dictation">默書 Dictation</option><option value="Reminder">一般提醒</option></select></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">標題</label><input type="text" id="event-title" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm" placeholder="例如：Chapter 3 小測"></div>
                             <div><label class="block text-sm font-medium text-gray-700 mb-1">考核範圍 / 備註細節</label><textarea id="event-details" class="w-full p-2.5 border rounded-lg outline-none focus:border-brand-orange text-sm" placeholder="例如：溫習 Chapter 7 Notes 第 42-50 頁" rows="2"></textarea></div>
                             <div><button id="btn-create-event" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 mt-2 transition-colors"><i class="ph ph-paper-plane-right"></i> 發佈至行事曆</button></div>
@@ -358,7 +358,24 @@
     <div id="modal-report-card" class="fixed inset-0 bg-black/60 z-[60] hidden flex flex-col items-center justify-center backdrop-blur-sm py-4"><div class="w-full max-w-[210mm] bg-white rounded-t-xl p-4 flex justify-between items-center shadow-lg z-[61]"><h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i class="ph ph-student text-brand-orange"></i>學術畫像報告</h3><div class="flex gap-3"><button id="btn-export-pdf" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"><i class="ph ph-file-pdf"></i> 下載 PDF</button><button class="btn-close-modal bg-gray-200 px-4 py-2 rounded-lg text-gray-700">關閉</button></div></div><div class="w-full max-w-[210mm] bg-white overflow-y-auto flex-1 rounded-b-xl shadow-2xl relative scrollbar-hide"><div id="pdf-content" class="p-12 bg-white text-gray-900 w-full min-h-[297mm] mx-auto box-border" style="aspect-ratio: 210/297;"><div class="border-b-4 border-brand-orange pb-6 mb-8 flex justify-between items-end"><div><h1 class="text-4xl font-black tracking-wider text-brand-black">STUDENT REPORT</h1><p class="text-gray-500 mt-2 text-lg">Academic Performance Analytics</p></div><div class="text-right"><p class="text-3xl font-bold text-brand-orange" id="rep-name">Name</p><p class="text-xl font-mono text-gray-600 mt-1">Class: <span id="rep-class">4A</span> | No: <span id="rep-id">01</span></p></div></div><div class="grid grid-cols-2 gap-10 mb-10"><div class="space-y-6"><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Overall Analyzed Score</h4><p class="text-5xl font-black font-mono text-gray-900" id="rep-total">--%</p></div><div class="bg-gray-50 p-6 rounded-2xl border"><h4 class="text-gray-500 font-bold uppercase tracking-wider mb-2">Performance Level</h4><p class="text-lg">This student performs at a <strong class="text-brand-orange" id="rep-grade-letter">--</strong> based on cohort percentile ranking.</p></div></div><div class="flex items-center justify-center p-4"><canvas id="radarChart" width="300" height="300"></canvas></div></div><div class="mb-8"><h4 class="text-xl font-bold border-l-4 border-brand-orange pl-3 mb-4">Assessment Breakdown</h4><table class="w-full text-left text-sm border-collapse"><thead class="bg-gray-100 text-gray-700"><tr><th class="p-3 border">Assessment Category</th><th class="p-3 border text-center">Score Ratio (%)</th></tr></thead><tbody id="rep-tbody" class="divide-y"></tbody></table></div><div class="text-center text-gray-400 text-sm mt-auto pt-10 border-t"><p>Generated by Roster Engine | <span id="rep-date"></span></p></div></div></div></div>
     
     <!-- Selective Reset DB -->
-    <div id="modal-reset-db" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-red-50 rounded-t-xl"><h3 class="text-lg font-bold text-red-800 flex items-center gap-2"><i class="ph ph-trash text-xl"></i>升學與畢業資料清理</h3><button class="btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><p class="text-gray-800 font-medium">您可以選擇性地刪除特定級別（如畢業班）的資料，而保留其他學生的歷史成績，或是全庫清空。</p><p class="text-red-600 font-bold">⚠️ 執行前，建議先「下載備份」！</p><div><label class="block font-medium mb-1 text-gray-500">選擇清理範圍：</label><select id="reset-scope" class="w-full p-2 border border-gray-300 rounded-lg outline-none mb-3"><option value="ALL">🚨 清空全校所有資料 (完全重置)</option></select></div><div><label class="block font-medium mb-1 text-gray-500">請輸入 <span class="font-bold text-red-600">DELETE</span> 確認：</label><input type="text" id="reset-confirm-text" class="w-full p-2 border border-red-300 rounded-lg outline-none uppercase font-bold text-center text-red-600 focus:ring-2 focus:ring-red-200"></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal">取消</button><button id="btn-execute-reset" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50" disabled>確認刪除</button></div></div></div>
+    <div id="modal-reset-db" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm"><div class="bg-white rounded-xl shadow-xl w-full max-w-md"><div class="p-5 border-b flex justify-between items-center bg-red-50 rounded-t-xl"><h3 class="text-lg font-bold text-red-800 flex items-center gap-2"><i class="ph ph-trash text-xl"></i>升學與畢業資料清理</h3><button class="btn-close-modal"><i class="ph ph-x text-xl"></i></button></div><div class="p-6 space-y-4 text-sm"><p class="text-gray-800 font-medium">您可以選擇性地刪除特定級別（如畢業班）的資料，而保留其他學生的歷史成績，或是全庫清空。</p><p class="text-red-600 font-bold flex items-center gap-1.5"><i class="ph ph-warning-circle text-lg shrink-0"></i>執行前，建議先「下載備份」！</p><div><label class="block font-medium mb-1 text-gray-500">選擇清理範圍：</label><select id="reset-scope" class="w-full p-2 border border-gray-300 rounded-lg outline-none mb-3"><option value="ALL">清空全校所有資料 (完全重置)</option></select></div><div><label class="block font-medium mb-1 text-gray-500">請輸入 <span class="font-bold text-red-600">DELETE</span> 確認：</label><input type="text" id="reset-confirm-text" class="w-full p-2 border border-red-300 rounded-lg outline-none uppercase font-bold text-center text-red-600 focus:ring-2 focus:ring-red-200"></div></div><div class="p-5 border-t bg-gray-50 flex justify-end gap-3 rounded-b-xl"><button class="px-4 py-2 bg-gray-200 rounded-lg btn-close-modal">取消</button><button id="btn-execute-reset" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50" disabled>確認刪除</button></div></div></div>
+
+    <!-- Reusable Confirm Dialog (replaces native confirm()) -->
+    <div id="modal-confirm" class="fixed inset-0 bg-black/60 z-[80] hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600 shrink-0"><i class="ph ph-warning text-xl"></i></div>
+                    <h3 id="confirm-title" class="text-lg font-bold text-gray-800">確認操作</h3>
+                </div>
+                <p id="confirm-message" class="text-sm text-gray-600 leading-relaxed">確定嗎？</p>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 rounded-b-xl border-t">
+                <button id="confirm-cancel" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">取消</button>
+                <button id="confirm-ok" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">確認</button>
+            </div>
+        </div>
+    </div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-3 pointer-events-none z-[200]"></div>
 
@@ -509,7 +526,7 @@
             window.dynamicClassOptions = classes; // For roster assignment
             
             const resetSel = document.getElementById('reset-scope');
-            resetSel.innerHTML = `<option value="ALL">🚨 清空全校所有資料 (完全重置)</option>` + forms.map(f => `<option value="${f}">🗑️ 僅刪除【S${f}】的學生與成績</option>`).join('');
+            resetSel.innerHTML = `<option value="ALL">清空全校所有資料 (完全重置)</option>` + forms.map(f => `<option value="${f}">僅刪除【S${f}】的學生與成績</option>`).join('');
         }
 
         function filterAndSortStudents(viewPrefix) {
@@ -566,7 +583,7 @@
                 
                 list.innerHTML += `<div class="flex items-start justify-between p-4 border rounded-xl hover:shadow-md bg-white"><div class="flex items-start gap-4"><div class="flex items-center justify-center w-16 h-16 rounded-lg ${clr} shrink-0"><i class="ph ${ic} text-2xl"></i></div><div><div class="flex items-center gap-2 mb-1"><span class="text-sm font-bold text-gray-800">${new Date(evt.date).toLocaleDateString('zh-TW', {month:'short',day:'numeric'})}</span><span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">${formatTargetDisplay(evt.classGroup)}</span></div><h4 class="font-bold text-gray-900 text-[15px]">${evt.title}</h4>${detailsHtml}</div></div><button class="btn-del-event p-2 text-gray-400 hover:text-white hover:bg-red-500 rounded-lg shrink-0 transition-colors" data-id="${evt.id}" title="刪除此排程"><i class="ph ph-trash text-xl"></i></button></div>`;
             });
-            document.querySelectorAll('.btn-del-event').forEach(btn => btn.addEventListener('click', async (e) => { if(confirm("確定刪除此排程？")) { await deleteDoc(getDocRef('timetable', e.currentTarget.getAttribute('data-id'))); showToast("已刪除", "success"); } }));
+            document.querySelectorAll('.btn-del-event').forEach(btn => btn.addEventListener('click', async (e) => { if(await confirmAction("確定刪除此排程？")) { await deleteDoc(getDocRef('timetable', e.currentTarget.getAttribute('data-id'))); showToast("已刪除", "success"); } }));
         }
 
         // Data Aligner Logic
@@ -661,7 +678,7 @@
         document.getElementById('btn-copy-websams').addEventListener('click', async () => {
             const rows = document.querySelectorAll('#aligner-tbody tr'); if(rows.length === 0) return;
             let tsv = ""; rows.forEach(tr => tsv += `${tr.querySelector('.websams-score-cell').textContent.trim().replace('N.A.','')}\n`);
-            try { await navigator.clipboard.writeText(tsv); showToast("✅ 已複製分數欄！請到 WebSAMS 貼上", "success"); } catch(e) { showToast("複製失敗", "error"); }
+            try { await navigator.clipboard.writeText(tsv); showToast("已複製分數欄！請到 WebSAMS 貼上", "success"); } catch(e) { showToast("複製失敗", "error"); }
         });
 
         function openReportCard(stu, res, calculatedLevel) {
@@ -690,7 +707,7 @@
             try {
                 const logsData = (await getDocs(getColRef('logs'))).docs.map(d => ({id: d.id, ...d.data()})); const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(studentsData), "Students"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(homeworksData), "Homeworks"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(submissionsData), "HW_Submissions"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(assessmentsData), "Assessments"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(gradesData.map(g=>({...g, breakdown:JSON.stringify(g.breakdown||{})}))), "Grades"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(timetableData), "Timetable"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(logsData), "Logs");
-                XLSX.writeFile(wb, `RosterEngine_Backup_${new Date().toISOString().slice(0,10)}.xlsx`); showToast("✅ 備份下載成功", "success");
+                XLSX.writeFile(wb, `RosterEngine_Backup_${new Date().toISOString().slice(0,10)}.xlsx`); showToast("備份下載成功", "success");
             } catch(e) { showToast("備份失敗", "error"); } finally { btn.innerHTML = '<i class="ph ph-download-simple"></i> 1. 下載備份 (留底)'; btn.disabled = false; }
         });
 
@@ -705,7 +722,7 @@
                     for (const c of ['students', 'homeworks', 'submissions', 'assessments', 'grades', 'timetable', 'logs']) {
                         const snap = await getDocs(getColRef(c)); for (const docSnap of snap.docs) await deleteDoc(getDocRef(c, docSnap.id));
                     }
-                    showToast("✅ 系統已完全重置", "success");
+                    showToast("系統已完全重置", "success");
                 } else {
                     const targetStudents = studentsData.filter(s => getForm(s.classGroup) === scope);
                     for(const stu of targetStudents) {
@@ -715,7 +732,7 @@
                         const sSnap = await getDocs(getColRef('submissions'));
                         for (const docSnap of sSnap.docs) { if(docSnap.data().studentId === stu.studentId) await deleteDoc(getDocRef('submissions', docSnap.id)); }
                     }
-                    showToast(`✅ S${scope} 的學生及成績已清理`, "success");
+                    showToast(`S${scope} 的學生及成績已清理`, "success");
                 }
                 resetModal.classList.add('hidden');
             } catch (err) { showToast("刪除失敗", "error"); } finally { btnExecuteReset.innerHTML = '確認刪除'; btnExecuteReset.disabled = false; }
@@ -786,7 +803,7 @@
             });
             document.querySelectorAll('.monitor-cb').forEach(cb=>cb.addEventListener('change', async(e)=>await setDoc(getDocRef('students', e.target.dataset.id), {isMonitor: e.target.checked}, {merge:true})));
             document.querySelectorAll('.tgt-sel').forEach(sel=>sel.addEventListener('change', async(e)=>await setDoc(getDocRef('students', e.target.dataset.id), {targetClass: e.target.value}, {merge:true})));
-            document.querySelectorAll('.drop-btn').forEach(btn=>btn.addEventListener('click', async(e)=>{ if(confirm("確定標記退修？")) await setDoc(getDocRef('students', e.target.dataset.id), {status: 'dropped'}, {merge:true}); }));
+            document.querySelectorAll('.drop-btn').forEach(btn=>btn.addEventListener('click', async(e)=>{ if(await confirmAction("確定標記退修？")) await setDoc(getDocRef('students', e.target.dataset.id), {status: 'dropped'}, {merge:true}); }));
         }
 
         // 🎯 Homework & Monitor Status Board Update
@@ -805,7 +822,7 @@
         document.getElementById('btn-delete-hw').addEventListener('click', async () => {
             const hwId = document.getElementById('filter-hw-select').value;
             if(!hwId) return;
-            if(confirm("確定要刪除這份功課？(學生端將同步移除)")) {
+            if(await confirmAction("確定要刪除這份功課？(學生端將同步移除)")) {
                 await deleteDoc(getDocRef('homeworks', hwId));
                 showToast("功課已刪除", "success");
                 document.getElementById('filter-hw-select').value = '';
@@ -842,10 +859,10 @@
                         : { status: 'draft' };
                     let sHtml, aHtml;
                     if(lData.status === 'locked') {
-                        sHtml = `<span class="text-green-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-green-500 shadow-sm"></div> 🟢 已確認提交 (${lData.date || ''})</span>`;
+                        sHtml = `<span class="text-green-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-green-500 shadow-sm"></div> 已確認提交 (${lData.date || ''})</span>`;
                         aHtml = `<button class="btn-unlock-monitor text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}" data-target="${mon.targetClass}"><i class="ph ph-lock-key-open text-lg"></i> 重新開啟科長修改權限</button>`;
                     } else {
-                        sHtml = `<span class="text-yellow-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-yellow-400 shadow-sm animate-pulse"></div> 🟡 點收中 (草稿)</span>`;
+                        sHtml = `<span class="text-yellow-600 font-bold flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-yellow-400 shadow-sm animate-pulse"></div> 點收中 (草稿)</span>`;
                         aHtml = `<button class="btn-lock-monitor text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors flex items-center gap-1.5 ml-auto" data-hw="${hwId}" data-mon="${mon.studentId}" data-target="${mon.targetClass}"><i class="ph ph-lock-key text-lg"></i> 強制鎖定不准再改</button>`;
                     }
                     bHtml += `<tr class="hover:bg-orange-100/30 transition-colors"><td class="px-6 py-2.5 font-mono text-orange-800/80">${formatTargetDisplay(mon.targetClass)}</td><td class="px-6 py-2.5 font-bold text-gray-800">${mon.name}</td><td class="px-6 py-2.5">${sHtml}</td><td class="px-6 py-2.5">${aHtml}</td></tr>`;
@@ -857,14 +874,14 @@
                     const h = e.currentTarget.dataset.hw, tgt = e.currentTarget.dataset.target;
                     // 🔄 改寫 lockControls collection（status 非 'locked' 即代表解鎖，學生端即時可再點收）
                     await setDoc(getDocRef('lockControls', `${h}_${tgt}`), { id: `${h}_${tgt}`, homeworkId: h, targetGroup: tgt, status: 'draft', lockedBy: currentUser.email, updatedAt: new Date().toISOString() }, {merge:true});
-                    showToast("🔓 已解除鎖定，科長可重新點收", "success");
+                    showToast("已解除鎖定，科長可重新點收", "success");
                 }));
                 monitorBoard.querySelectorAll('.btn-lock-monitor').forEach(b => b.addEventListener('click', async (e) => {
                     const h = e.currentTarget.dataset.hw, tgt = e.currentTarget.dataset.target;
                     const date = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit'}); 
                     // 🔄 改寫 lockControls collection（與學生端科長「確認收齊並鎖定」同一格）
                     await setDoc(getDocRef('lockControls', `${h}_${tgt}`), { id: `${h}_${tgt}`, homeworkId: h, targetGroup: tgt, status: 'locked', date, lockedBy: currentUser.email, lockedAt: new Date().toISOString() }, {merge:true});
-                    showToast("🔒 已強制鎖定該科長權限", "success");
+                    showToast("已強制鎖定該科長權限", "success");
                 }));
             } else {
                 monitorBoard.classList.add('hidden');
@@ -925,7 +942,7 @@
             showToast("發佈完成，已更新學生等級", "success");
         });
         
-        window.deleteAsm = async (id) => { if(confirm("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); } }
+        window.deleteAsm = async (id) => { if(await confirmAction("確定刪除此測考項目？")) { await deleteDoc(getDocRef('assessments', id)); showToast("已刪除", "success"); } }
 
         document.getElementById('btn-export-grades').addEventListener('click', () => {
             let fList = filterAndSortStudents('grading');
@@ -956,7 +973,7 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Grades");
             XLSX.writeFile(wb, `DynamicGrading_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showToast("✅ 成績表匯出成功", "success");
+            showToast("成績表匯出成功", "success");
             logAction("匯出 Dynamic Grading 成績表");
         });
 
@@ -1011,7 +1028,7 @@
                     // 🔒 路 B：為已發佈嘅評核更新學生等級（草稿階段唔會觸發）
                     for(const aid of touchedAsm) { const a = assessmentsData.find(x=>x.id===aid); if(a && a.status==='published') await recomputeAssessmentLevels(aid); }
                     
-                    showToast(`✅ 成功匯入 ${updateCount} 筆成績！`, "success");
+                    showToast(`成功匯入 ${updateCount} 筆成績！`, "success");
                     document.getElementById('modal-import-grades').classList.add('hidden');
                     e.target.value = '';
                     logAction("使用 Excel 批次入分");
@@ -1132,11 +1149,28 @@
             }; reader.readAsArrayBuffer(file);
         });
 
+        // Reusable promise-based confirm dialog (replaces native confirm()).
+        function confirmAction(message, { title = '確認操作', okText = '確認' } = {}) {
+            return new Promise(resolve => {
+                const modal = document.getElementById('modal-confirm');
+                const okBtn = document.getElementById('confirm-ok');
+                const cancelBtn = document.getElementById('confirm-cancel');
+                document.getElementById('confirm-message').textContent = message;
+                document.getElementById('confirm-title').textContent = title;
+                okBtn.textContent = okText;
+                modal.classList.remove('hidden');
+                const done = (val) => { modal.classList.add('hidden'); okBtn.onclick = null; cancelBtn.onclick = null; resolve(val); };
+                okBtn.onclick = () => done(true);
+                cancelBtn.onclick = () => done(false);
+            });
+        }
+
         function showToast(msg, type="info") {
             const container = document.getElementById('toast-container'), t = document.createElement('div');
             const clr = type==="success"?"bg-green-800":type==="error"?"bg-red-600":"bg-gray-800";
+            const icon = type==="success"?"ph-check-circle":type==="error"?"ph-x-circle":"ph-info";
             t.className = `flex items-center gap-2 px-4 py-3 rounded shadow-xl text-white font-medium text-sm toast-enter ${clr}`;
-            t.innerHTML = `<i class="ph ph-info text-lg"></i> ${msg}`;
+            t.innerHTML = `<i class="ph ${icon} text-lg shrink-0"></i> <span>${msg}</span>`;
             container.appendChild(t); setTimeout(() => { t.classList.replace('toast-enter', 'toast-leave'); setTimeout(()=>t.remove(), 300); }, 3000);
         }
 
